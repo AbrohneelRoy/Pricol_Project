@@ -1,0 +1,56 @@
+/* Report.module.css */
+
+.report-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+  }
+  
+  .report-header {
+    background-color: #137cec;
+    color: white;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  
+  .report-logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .report-logoImage {
+    height: 60px; /* Adjust the size of your logo as needed */
+  }
+  
+  .report-userInfo {
+    font-size: 24px;
+  }
+  
+  .report-main {
+    display: flex;
+    flex: 1;
+  }
+  
+  .report-content {
+    flex: 1;
+    margin-left: 220px; /* Adjust to fit next to the fixed navbar */
+    padding: 40px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .report-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  

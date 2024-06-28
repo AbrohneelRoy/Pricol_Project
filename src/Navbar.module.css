@@ -1,53 +1,50 @@
-/* Navbar.module.css */
+.navbar-wrapper {
+  background-color: #0056b3;
+  width: 200px;
+  padding: 20px 0;
+  height: 100vh;
+  position: fixed;
+}
 
-.navbar {
-    background-color: #0056b3;
-    width: 200px;
-    padding: 20px 0;
-    height: 100vh;
-    position: fixed;
-  }
-  
-  .navList {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .navList li {
-    margin: 20px 0;
-  }
-  
-  .navButton,
-  .logoutButton {
-    color: #fff;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 12px 20px; /* Adjusted padding for button */
-    border-radius: 5px;
-    display: block;
-    margin: 20px 10px; /* Adjusted margin for button */
-    border: none;
-    background: none;
-    cursor: pointer;
-    text-align: left;
-    transition: background-color 0.3s, color 0.3s;
-    width: 160px; /* Fixed width for buttons */
-    text-overflow: ellipsis; /* Handle long texts with ellipsis */
-    overflow: hidden; /* Hide overflow text */
-    white-space: nowrap; /* Prevent wrapping */
-  }
-  
-  .navButton:hover,
-  .logoutButton:hover {
-    background-color: #fff;
-    color: #0056b3;
-    transform: scale(1.05); /* Scale up on hover for a subtle effect */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
-  }
-  
-  .activeLink {
-    background-color: #fff;
-    color: #0056b3;
-  }
-  
+.navbar-navList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-navList li {
+  margin: 20px 0;
+}
+
+.navbar-navButton,
+.navbar-logoutButton {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 12px 20px; /* Adjusted padding for button */
+  border-radius: 5px;
+  display: block;
+  margin: 20px 10px; /* Adjusted margin for button */
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.3s, color 0.3s;
+  width: 160px; /* Fixed width for buttons */
+  text-overflow: ellipsis; /* Handle long texts with ellipsis */
+  overflow: hidden; /* Hide overflow text */
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.navbar-navButton:hover,
+.navbar-logoutButton:hover {
+  background-color: #fff;
+  color: #0056b3;
+  transform: scale(1.05); /* Scale up on hover for a subtle effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
+}
+
+.navbar-activeLink {
+  background-color: #fff;
+  color: #0056b3;
+}

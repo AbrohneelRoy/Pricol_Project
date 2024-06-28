@@ -30,7 +30,7 @@
 }
 
 .register-logoImage {
-  height: 50px; /* Adjust the size of your logo as needed */
+  height: 60px; /*logo size change */
 }
 
 .register-userInfo {
@@ -55,7 +55,7 @@
   background-color: white;
   padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 400px;
 }
