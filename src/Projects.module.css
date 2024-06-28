@@ -32,7 +32,7 @@
 }
 
 .projects-logoImg {
-  height: 100%; /* Adjust height as needed */
+  height: 110px; /* Adjust height as needed */
   max-width: 53%; /* Ensure image does not exceed container */
   object-fit: contain; /* Preserve aspect ratio */
   margin-right: 10px; /* Optional: Adjust spacing */
