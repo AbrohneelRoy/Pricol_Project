@@ -1,66 +1,105 @@
-/* Register.module.css */
+.register-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5;
+}
 
-.registerWrapper {
-    font-family: 'Arial', sans-serif;
-    background-color: #003a80;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-  
-  .registerContainer {
-    width: 100%;
-    max-width: 400px;
-    background-color: #ffffff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    padding: 20px;
-  }
-  
-  .registerContainer h2 {
-    margin-bottom: 20px;
-    color: #333333;
-    text-align: center;
-  }
-  
-  .registerFormGroup {
-    margin-bottom: 20px;
-  }
-  
-  .registerFormGroup label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333333;
-  }
-  
-  .registerInput {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    font-size: 16px;
-    outline: none;
-  }
-  
-  .registerButton {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    background-color: #0063ce;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .registerButton:hover {
-    background-color: #0056d3;
-  }
-  
+.register-header {
+  background-color: #137cec;
+  color: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.register-topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.register-logo {
+  display: flex;
+  align-items: center;
+}
+
+.register-logoImage {
+  height: 50px; /* Adjust the size of your logo as needed */
+}
+
+.register-userInfo {
+  font-size: 24px;
+}
+
+.register-container {
+  display: flex;
+  flex: 1;
+}
+
+.register-content {
+  flex: 1;
+  margin-left: 220px; /* Adjust to fit next to the fixed navbar */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-formContainer {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.register-formGroup {
+  margin-bottom: 20px;
+}
+
+.register-formGroup label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.register-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.register-button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background-color: #0063ce;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.register-button:hover {
+  background-color: #0056d3;
+}
+
+.register-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}

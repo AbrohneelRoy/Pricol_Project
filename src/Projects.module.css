@@ -1,53 +1,54 @@
-.projectsContainer {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
-  .header {
-    background-color: #137cec;
-    color: white;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-  
-  .topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-  }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .logoImg {
-    height: 100%; /* Adjust height as needed */
-    max-width: 53%; /* Ensure image does not exceed container */
-    object-fit: contain; /* Preserve aspect ratio */
-    margin-right: 10px; /* Optional: Adjust spacing */
-  }
-  
-  .userInfo {
-    font-size: 24px;
-  }
-  
-  .projectsMainContent {
-    display: flex;
-    flex: 1;
-  }
-  
-  .projectsContent {
-    flex: 1;
-    margin-left: 220px; /* Adjusted to fit next to the fixed navbar */
-    padding: 20px;
-  }
-  
+/* Projects.module.css */
+
+.projects-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.projects-header {
+  background-color: #137cec;
+  color: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.projects-topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.projects-logo {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.projects-logoImg {
+  height: 100%; /* Adjust height as needed */
+  max-width: 53%; /* Ensure image does not exceed container */
+  object-fit: contain; /* Preserve aspect ratio */
+  margin-right: 10px; /* Optional: Adjust spacing */
+}
+
+.projects-userInfo {
+  font-size: 24px;
+}
+
+.projects-mainContent {
+  display: flex;
+  flex: 1;
+}
+
+.projects-content {
+  flex: 1;
+  margin-left: 220px; /* Adjusted to fit next to the fixed navbar */
+  padding: 20px;
+}
