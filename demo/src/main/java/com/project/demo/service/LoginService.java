@@ -33,4 +33,16 @@ public class LoginService {
     public Login findByUsername(String username) {
         return loginRepository.findByUsername(username);
     }
+
+    public Login findByEmail(String email) {
+        return loginRepository.findByEmail(email);
+    }
+
+    public boolean usernameExists(String username) {
+        return loginRepository.findByUsername(username) != null;
+    }
+
+    public boolean emailExists(String email) {
+        return loginRepository.findByEmail(email) != null;
+    }
 }

@@ -21,8 +21,16 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping
-    public Login createLogin(@RequestBody Login login) {
-        return loginService.createLogin(login);
+    public ResponseEntity<?> createLogin(@RequestBody Login login) {
+        if (loginService.usernameExists(login.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "Username already exists"));
+        }
+        if (loginService.emailExists(login.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "Email already exists"));
+        }
+
+        Login newLogin = loginService.createLogin(login);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Registration successful", "login", newLogin));
     }
 
     @GetMapping
@@ -52,20 +60,16 @@ public class LoginController {
         Login existingLogin = loginService.findByUsername(login.getUsername());
         if (existingLogin != null && existingLogin.getPassword().equals(login.getPassword())) {
             if ("admin".equals(existingLogin.getUsername().toLowerCase())) {
-                // Provide additional information or functionality for admin
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
                 response.put("message", "Login successful!");
-                response.put("isAdmin", true); // Example of flag for admin status
+                response.put("isAdmin", true);
                 return ResponseEntity.ok(response);
             } else {
-                // Regular user login success
                 return ResponseEntity.ok(Map.of("success", true, "message", "Login successful!"));
             }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "Invalid username or password"));
         }
     }
-    
-
 }
