@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import styles from './Report.module.css';
-import logoImage from './image.png'; // Import your logo image here
+import logoImage from './image.png'; 
 
 const Report = () => {
   const username = localStorage.getItem('username');

@@ -24,7 +24,7 @@
   }
   
   .report-logoImage {
-    height: 60px; /* Adjust the size of your logo as needed */
+    height: 60px;
   }
   
   .report-userInfo {
@@ -38,7 +38,7 @@
   
   .report-content {
     flex: 1;
-    margin-left: 220px; /* Adjust to fit next to the fixed navbar */
+    margin-left: 220px; 
     padding: 40px;
     background-color: white;
     display: flex;

@@ -21,27 +21,27 @@
   color: #fff;
   text-decoration: none;
   font-size: 18px;
-  padding: 12px 20px; /* Adjusted padding for button */
+  padding: 12px 20px; 
   border-radius: 5px;
   display: block;
-  margin: 20px 10px; /* Adjusted margin for button */
+  margin: 20px 10px; 
   border: none;
   background: none;
   cursor: pointer;
   text-align: left;
   transition: background-color 0.3s, color 0.3s;
-  width: 160px; /* Fixed width for buttons */
-  text-overflow: ellipsis; /* Handle long texts with ellipsis */
-  overflow: hidden; /* Hide overflow text */
-  white-space: nowrap; /* Prevent wrapping */
+  width: 160px; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+  white-space: nowrap; 
 }
 
 .navbar-navButton:hover,
 .navbar-logoutButton:hover {
   background-color: #fff;
   color: #0056b3;
-  transform: scale(1.05); /* Scale up on hover for a subtle effect */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
+  transform: scale(1.05); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-activeLink {

@@ -30,7 +30,7 @@
 }
 
 .register-logoImage {
-  height: 60px; /*logo size change */
+  height: 60px; 
 }
 
 .register-userInfo {
@@ -44,7 +44,7 @@
 
 .register-content {
   flex: 1;
-  margin-left: 220px; /* Adjust to fit next to the fixed navbar */
+  margin-left: 220px;
   padding: 20px;
   display: flex;
   justify-content: center;

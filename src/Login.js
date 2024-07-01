@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Login.module.css'; // Import CSS module
+import styles from './Login.module.css'; 
 import loginImage from './image.png';
 
 const Login = () => {
@@ -12,7 +12,7 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/login/check', {
+      const response = await fetch('http://192.168.202.228:8080/login/check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

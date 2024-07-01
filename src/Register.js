@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Register.module.css'; // Define your Register component styles
+import styles from './Register.module.css'; 
 import Navbar from './Navbar';
-import logoImage from './image.png'; // Import your image
+import logoImage from './image.png'; 
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -15,7 +15,7 @@ const Register = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch('http://192.168.202.228:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const Register = () => {
         </div>
       </header>
       <div className={styles['register-container']}>
-        <Navbar /> {/* Include the Navbar */}
+        <Navbar /> 
         <div className={styles['register-content']}>
           <div className={styles['register-formContainer']}>
             <h2 className={styles['register-title']}>Register</h2>
