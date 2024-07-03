@@ -1,3 +1,4 @@
+/* Register Wrapper */
 .register-wrapper {
   display: flex;
   flex-direction: column;
@@ -6,6 +7,7 @@
   background-color: #f0f2f5;
 }
 
+/* Register Header */
 .register-header {
   background-color: #137cec;
   color: white;
@@ -16,6 +18,7 @@
   padding: 0 20px;
 }
 
+/* Register Top Bar */
 .register-topBar {
   display: flex;
   justify-content: space-between;
@@ -24,33 +27,43 @@
   width: 100%;
 }
 
+/* Register Logo */
 .register-logo {
   display: flex;
   align-items: center;
 }
 
 .register-logoImage {
-  height: 60px; 
+  height: 60px;
 }
 
+/* Register User Info */
 .register-userInfo {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
   font-size: 24px;
+  color: #fff;
+  margin: 40px;
 }
 
+/* Register Container */
 .register-container {
   display: flex;
   flex: 1;
 }
 
+/* Register Content */
 .register-content {
   flex: 1;
-  margin-left: 220px;
+  margin-left: auto;
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Register Form Container */
 .register-formContainer {
   background-color: white;
   padding: 40px;
@@ -60,6 +73,7 @@
   max-width: 400px;
 }
 
+/* Register Form Group */
 .register-formGroup {
   margin-bottom: 20px;
 }
@@ -79,6 +93,7 @@
   box-sizing: border-box;
 }
 
+/* Register Button */
 .register-button {
   display: block;
   width: 100%;
@@ -96,10 +111,50 @@
   background-color: #0056d3;
 }
 
+/* Register Title */
 .register-title {
   text-align: center;
   margin-bottom: 30px;
   font-size: 24px;
   font-weight: bold;
   color: #333;
+}
+
+/* Dropdown Styles */
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 29px;
+  right: -45px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+/* Show Dropdown Content */
+.dropdownOpen {
+  display: block;
+}
+
+/* Dropdown Item */
+.dropdownContent button {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  color: #137cec;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+
+/* Dropdown Item Hover */
+.dropdownContent button:hover {
+  background-color: #137cec;
+  color: #f2f2f2;
 }

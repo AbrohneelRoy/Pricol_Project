@@ -1,9 +1,11 @@
+/* Dashboard Wrapper */
 .dashboardWrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh; /* Ensures minimum height to cover viewport */
 }
 
+/* Dashboard Header */
 .dashboardheader {
   background-color: #137cec;
   color: white;
@@ -12,16 +14,22 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
+/* Top Bar */
 .dashtopBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
+  height: 70px; /* Matches header height */
   width: 100%;
 }
 
+/* Dashboard Logo */
 .dashlogo {
   display: flex;
   align-items: center;
@@ -31,37 +39,44 @@
 
 .dashlogoImg {
   height: 60px;
-  max-width: 100%; 
-  object-fit: contain; /* Preserve aspect ratio */
-  margin-right: 10px; /* Optional: Adjust spacing */
+  max-width: 100%;
+  object-fit: contain;
+  margin-right: 10px;
 }
 
+/* User Info */
 .dashuserInfo {
   font-size: 24px;
+  margin: 40px;
 }
 
+/* Dashboard Container */
 .dashboardContainer {
   display: flex;
   flex: 1;
+  margin-top: 70px; /* Adjust for fixed header */
 }
 
+/* Main Content */
 .mainContent {
   flex: 1;
   padding: 20px;
-  margin-left: 200px; /* Make space for the navbar */
 }
 
+/* Username */
 .username {
   font-size: 32px;
   margin-bottom: 20px;
 }
 
+/* Statistics Section */
 .stats {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
 }
 
+/* Individual Statistic Item */
 .statItem {
   background-color: #f0f0f0;
   padding: 20px;
@@ -71,8 +86,85 @@
   margin: 0 10px;
 }
 
+/* Chart Section */
 .chart {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+}
+.viewButton {
+  background-color: #137cec;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.viewButton:hover {
+  background-color: #0056b3;
+}
+/* Dropdown Container */
+.dashuserInfo {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 24px;
+  color: #fff;
+  margin: 80px;
+}
+
+/* Dropdown Content */
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 32px; /* Adjusted to align below the header */
+  right: -45px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+/* Show Dropdown Content */
+.dropdownOpen .dropdownContent {
+  display: block;
+}
+
+/* Dropdown Item */
+.dropdownContent button {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  color: #137cec;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+
+/* Dropdown Item Hover */
+.dropdownContent button:hover {
+  background-color: #137cec;
+  color: #f2f2f2;
+}
+
+/* Dropdown Item with Border Radius */
+.dropdownContent button:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.dropdownContent button:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }

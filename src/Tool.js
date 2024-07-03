@@ -5,7 +5,8 @@ import logoImage from './image.png';
 import {useNavigate} from 'react-router-dom';
 
 
-const Projects = () => {
+
+const Tool = () => {
   const navigate = useNavigate();
   const username = localStorage.getItem('username');
   const [projects, setProjects] = useState([]);
@@ -44,13 +45,14 @@ const Projects = () => {
       console.error('Error fetching projects:', error);
     }
   };
-  const handleLogout = () => {
-    localStorage.removeItem('username');
-    navigate('/login', { replace: true });
-  };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    navigate('/login', { replace: true });
   };
 
   const handleInputChange = (event) => {
@@ -139,16 +141,15 @@ const Projects = () => {
       window.alert('Please select exactly one project to modify.');
       return;
     }
-  
+
     try {
       const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
-      setNewProject(response.data); // Update newProject state with fetched data
-      setShowAddForm(true); // Show the form for modification
+      setNewProject(response.data);
+      setShowAddForm(true);
     } catch (error) {
       console.error('Error fetching project for modification:', error);
     }
   };
-  
 
   const handleToggleExtendedFields = () => {
     setShowExtendedFields(!showExtendedFields);
@@ -232,6 +233,7 @@ const Projects = () => {
         </li>
       </ul>
     </div>
+        
         <div className={styles['projects-content']}>
           <div className={styles['projects-controls']}>
             <input
@@ -245,6 +247,22 @@ const Projects = () => {
           {showAddForm && (
             <div className={styles['projects-form']}>
               <h2>{newProject['sno'] ? 'Modify Data' : 'Add New Data'}</h2>
+              <input
+                type="text"
+                name="empCode"
+                placeholder="Emp Code"
+                value={newProject.empCode}
+                onChange={handleInputChange}
+                className={styles['projects-input']}
+              />
+              <input
+                type="text"
+                name="humanResources"
+                placeholder="Human Resources"
+                value={newProject.humanResources}
+                onChange={handleInputChange}
+                className={styles['projects-input']}
+              />
               <input
                 type="text"
                 name="projectName"
@@ -274,22 +292,6 @@ const Projects = () => {
                 name="toolSerialName"
                 placeholder="Tool Serial Name"
                 value={newProject.toolSerialName}
-                onChange={handleInputChange}
-                className={styles['projects-input']}
-              />
-              <input
-                type="text"
-                name="empCode"
-                placeholder="Emp Code"
-                value={newProject.empCode}
-                onChange={handleInputChange}
-                className={styles['projects-input']}
-              />
-              <input
-                type="text"
-                name="humanResources"
-                placeholder="Human Resources"
-                value={newProject.humanResources}
                 onChange={handleInputChange}
                 className={styles['projects-input']}
               />
@@ -379,12 +381,12 @@ const Projects = () => {
                 <th>
                   <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
                 </th>
-                <th>Project Name</th>
-                <th>Project PIF</th>
                 <th>Tool Name</th>
                 <th>Tool Serial Name</th>
                 <th>Emp Code</th>
                 <th>Human Resources</th>
+                <th>Project Name</th>
+                <th>Project PIF</th>
                 <th>Customer</th>
                 {showExtendedFields && (
                   <>
@@ -410,12 +412,12 @@ const Projects = () => {
                       onChange={(event) => handleCheckboxChange(event, project['sno'])}
                     />
                   </td>
-                  <td>{project.projectName}</td>
-                  <td>{project.projectPIF}</td>
                   <td>{project.toolName}</td>
                   <td>{project.toolSerialName}</td>
                   <td>{project.empCode}</td>
                   <td>{project.humanResources}</td>
+                  <td>{project.projectName}</td>
+                  <td>{project.projectPIF}</td>
                   <td>{project.customer}</td>
                   {showExtendedFields && (
                     <>
@@ -439,4 +441,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Tool;

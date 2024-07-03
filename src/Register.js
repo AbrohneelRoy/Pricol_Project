@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Register.module.css'; 
-import Navbar from './Navbar';
-import logoImage from './image.png'; 
+import styles from './Register.module.css';
+import logoImage from './image.png';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('username');
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleDash = () => {
+    navigate('/dashboard');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    navigate('/login', { replace: true });
+  };
+
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -44,11 +59,16 @@ const Register = () => {
           <div className={styles['register-logo']}>
             <img src={logoImage} alt="Logo" className={styles['register-logoImage']} />
           </div>
-          <div className={styles['register-userInfo']}>{loggedInUser}</div>
+          <div className={styles['register-userInfo']} onClick={toggleDropdown}>
+            {loggedInUser}
+            <div className={`${styles.dropdownContent} ${dropdownOpen ? styles.dropdownOpen : ''}`}>
+              <button onClick={handleDash}>Dashboard</button>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          </div>
         </div>
       </header>
       <div className={styles['register-container']}>
-        <Navbar /> 
         <div className={styles['register-content']}>
           <div className={styles['register-formContainer']}>
             <h2 className={styles['register-title']}>Register</h2>

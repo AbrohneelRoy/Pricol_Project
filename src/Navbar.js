@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Navbar.module.css';
 
-const Navbar = () => {
+const Navbar = ({ isAdmin }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const username = localStorage.getItem('username');
@@ -14,6 +14,18 @@ const Navbar = () => {
 
   const handleRegister = () => {
     navigate('/register');
+  };
+
+  const handleAdd = () => {
+    navigate('/projects/add');
+  };
+
+  const handleModify = () => {
+    navigate('/projects/modify');
+  };
+
+  const handleDelete = () => {
+    navigate('/projects/delete');
   };
 
   return (
@@ -29,20 +41,30 @@ const Navbar = () => {
         </li>
         <li>
           <button 
-            onClick={() => navigate('/projects')} 
-            className={`${styles['navbar-navButton']} ${location.pathname === '/projects' ? styles['navbar-activeLink'] : ''}`}
+            onClick={handleAdd} 
+            className={`${styles['navbar-navButton']} ${location.pathname === '/projects/add' ? styles['navbar-activeLink'] : ''}`}
           >
-            Projects
+            Add
           </button>
         </li>
         <li>
           <button 
-            onClick={() => navigate('/report')} 
-            className={`${styles['navbar-navButton']} ${location.pathname === '/report' ? styles['navbar-activeLink'] : ''}`}
+            onClick={handleModify} 
+            className={`${styles['navbar-navButton']} ${location.pathname === '/projects/modify' ? styles['navbar-activeLink'] : ''}`}
           >
-            Reports
+            Modify
           </button>
         </li>
+        {username === 'Admin' && (
+          <li>
+            <button 
+              onClick={handleDelete} 
+              className={`${styles['navbar-navButton']} ${location.pathname === '/projects/delete' ? styles['navbar-activeLink'] : ''}`}
+            >
+              Delete
+            </button>
+          </li>
+        )}
         {username === 'Admin' && (
           <li>
             <button 

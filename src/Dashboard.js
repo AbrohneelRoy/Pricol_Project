@@ -1,11 +1,9 @@
-// Dashboard.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
-import Navbar from './Navbar';
 import logoImage from './image.png';
 
 Chart.register(ArcElement, Tooltip, Legend);
@@ -15,6 +13,8 @@ const Dashboard = () => {
   const [projectsCount, setProjectsCount] = useState(0);
   const [employeesCount, setEmployeesCount] = useState(0);
   const [toolsCount, setToolsCount] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCounts();
@@ -52,6 +52,30 @@ const Dashboard = () => {
     ]
   };
 
+  const handleViewProjects = () => {
+    navigate('/projects');
+  };
+  
+  const handleViewEmp = () => {
+    navigate('/employee');
+  };
+  
+  const handleViewTool = () => {
+    navigate('/tool');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    navigate('/login', { replace: true });
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+  const handleRegister = () => {
+    navigate('/register');
+  };
+
   return (
     <div className={styles.dashboardWrapper}>
       <header className={styles.dashboardheader}>
@@ -59,11 +83,16 @@ const Dashboard = () => {
           <div className={styles.dashlogo}>
             <img src={logoImage} alt="Logo" className={styles.dashlogoImg} />
           </div>
-          <div className={styles.dashuserInfo}>{username}</div>
+          <div className={`${styles.dashuserInfo} ${dropdownOpen ? styles.dropdownOpen : ''}`} onClick={toggleDropdown}>
+            {username}
+            <div className={styles.dropdownContent}>
+              {username === 'Admin' && <button onClick={handleRegister}>Register</button>}
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          </div>
         </div>
       </header>
       <div className={styles.dashboardContainer}>
-        <Navbar />
         <div className={styles.mainContent}>
           <h1 className={styles.username}>Welcome, {username}!</h1>
           <p>Enjoy the seamless experience of our application.</p>
@@ -71,14 +100,17 @@ const Dashboard = () => {
             <div className={styles.statItem}>
               <h2>Projects</h2>
               <p>{projectsCount}</p>
+              <button className={styles.viewButton} onClick={handleViewProjects}>View</button>
             </div>
             <div className={styles.statItem}>
               <h2>Employees</h2>
               <p>{employeesCount}</p>
+              <button className={styles.viewButton} onClick={handleViewEmp}>View</button>
             </div>
             <div className={styles.statItem}>
               <h2>Tools</h2>
               <p>{toolsCount}</p>
+              <button className={styles.viewButton} onClick={handleViewTool}>View</button>
             </div>
           </div>
           <div className={styles.chart}>
