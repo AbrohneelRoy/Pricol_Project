@@ -23,73 +23,67 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<?> createProject(@RequestBody Project project) {
-        if (projectService.getProjectByName(project.getProjectName()).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Project name already exists"));
+        try {
+            Project newProject = projectService.createProject(project);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Project created successfully", "project", newProject));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
-
-        Project newProject = projectService.createProject(project);
-        return ResponseEntity.ok(Map.of("success", true, "message", "Project created successfully", "project", newProject));
     }
 
     @GetMapping
-    public List<Project> getAllProjects() {
-        return (List<Project>) projectService.getAllProjects();
+    public ResponseEntity<List<Project>> getAllProjects() {
+        List<Project> projects = (List<Project>) projectService.getAllProjects();
+        return ResponseEntity.ok(projects);
     }
 
-    @GetMapping("/name/{projectName}")
-    public ResponseEntity<Project> getProjectByName(@PathVariable String projectName) {
-        return projectService.getProjectByName(projectName)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{sno}")
+    public ResponseEntity<Project> getProjectBySno(@PathVariable Integer sno) {
+        try {
+            return projectService.getProjectBySno(sno)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    @GetMapping("/pif/{projectPIF}")
-    public ResponseEntity<Project> getProjectByPIF(@PathVariable String projectPIF) {
-        return projectService.getProjectByPIF(projectPIF)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @DeleteMapping("/{sno}")
+    public ResponseEntity<Void> deleteProjectBySno(@PathVariable Integer sno) {
+        try {
+            projectService.deleteProjectBySno(sno);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    @DeleteMapping("/name/{projectName}")
-    public ResponseEntity<Void> deleteProjectByName(@PathVariable String projectName) {
-        projectService.deleteProjectByName(projectName);
-        return ResponseEntity.ok().build();
+    @PutMapping("/{sno}")
+    public ResponseEntity<?> updateProject(@PathVariable Integer sno, @RequestBody Project newProject) {
+        try {
+            Project updatedProject = projectService.updateProject(sno, newProject);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Project updated successfully", "project", updatedProject));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 
-    @DeleteMapping("/pif/{projectPIF}")
-    public ResponseEntity<Void> deleteProjectByPIF(@PathVariable String projectPIF) {
-        projectService.deleteProjectByPIF(projectPIF);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/name/{oldProjectName}")
-public ResponseEntity<?> updateProjectName(@PathVariable String oldProjectName, @RequestBody Project newProject) {
-    try {
-        Project updatedProject = projectService.updateProjectName(oldProjectName, newProject);
-        return ResponseEntity.ok(Map.of("success", true, "message", "Project updated successfully", "project", updatedProject));
-    } catch (EntityNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", e.getMessage()));
-    }
-}
-
-
-    @PutMapping("/pif/{projectPIF}")
-    public ResponseEntity<?> updateProjectByPIF(@PathVariable String projectPIF, @RequestBody Project newProject) {
-        ResponseEntity<?> responseEntity = projectService.updateProjectByPIF(projectPIF, newProject);
-        return responseEntity;
-    }
-
-    @GetMapping("/counts")
+    @GetMapping("/count")
     public ResponseEntity<Map<String, Long>> countDistinctFields() {
-        long projectCount = projectService.countDistinctProjectNames();
-        long toolCount = projectService.countDistinctToolNames();
-        long empCount = projectService.countDistinctEmpCodes();
-        
-        return ResponseEntity.ok(Map.of(
-                "projectCount", projectCount,
-                "toolCount", toolCount,
-                "empCount", empCount
-        ));
-    }
+        try {
+            long projectCount = projectService.countDistinctProjectNames();
+            long toolCount = projectService.countDistinctToolNames();
+            long empCount = projectService.countDistinctEmpCodes();
 
+            return ResponseEntity.ok(Map.of(
+                    "projectCount", projectCount,
+                    "toolCount", toolCount,
+                    "empCount", empCount
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

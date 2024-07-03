@@ -1,12 +1,13 @@
 package com.project.demo.model;
 
-
 import jakarta.persistence.*;
 
 @Entity
 public class Project {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer sno;
     private String projectName;
     private String projectPIF;
     private String toolName;
@@ -14,10 +15,22 @@ public class Project {
     private String empCode;
     private String humanResources;
     private String customer;
+    private String softwareSOPActualDate;
+    private String softwareSOPPlannedDate;
+    private String ddeffortsActual;
+    private String ddeffortsPlanned;
+    private String ddAmountActual;
+    private String ddAmountPlanned;
+    private String sopActualEndDate;
+    private String sopPlannedEndDate;
 
-    // Constructors, getters, setters
-    // Ensure all fields have appropriate getters and setters
-    // Constructor(s) should initialize all fields
+    public Integer getSno() {
+        return sno;
+    }
+
+    public void setSno(Integer sno) {
+        this.sno = sno;
+    }
 
     public String getProjectName() {
         return projectName;
@@ -74,4 +87,97 @@ public class Project {
     public void setCustomer(String customer) {
         this.customer = customer;
     }
+
+    public String getSoftwareSOPActualDate() {
+        return softwareSOPActualDate;
+    }
+
+    public void setSoftwareSOPActualDate(String softwareSOPActualDate) {
+        this.softwareSOPActualDate = softwareSOPActualDate;
+    }
+
+    public String getSoftwareSOPPlannedDate() {
+        return softwareSOPPlannedDate;
+    }
+
+    public void setSoftwareSOPPlannedDate(String softwareSOPPlannedDate) {
+        this.softwareSOPPlannedDate = softwareSOPPlannedDate;
+    }
+
+    public String getDdeffortsActual() {
+        return ddeffortsActual;
+    }
+
+    public void setDdeffortsActual(String ddeffortsActual) {
+        this.ddeffortsActual = ddeffortsActual;
+    }
+
+    public String getDdeffortsPlanned() {
+        return ddeffortsPlanned;
+    }
+
+    public void setDdeffortsPlanned(String ddeffortsPlanned) {
+        this.ddeffortsPlanned = ddeffortsPlanned;
+    }
+
+    public String getDdAmountActual() {
+        return ddAmountActual;
+    }
+
+    public void setDdAmountActual(String ddAmountActual) {
+        this.ddAmountActual = ddAmountActual;
+    }
+
+    public String getDdAmountPlanned() {
+        return ddAmountPlanned;
+    }
+
+    public void setDdAmountPlanned(String ddAmountPlanned) {
+        this.ddAmountPlanned = ddAmountPlanned;
+    }
+
+    public String getSopActualEndDate() {
+        return sopActualEndDate;
+    }
+
+    public void setSopActualEndDate(String sopActualEndDate) {
+        this.sopActualEndDate = sopActualEndDate;
+    }
+
+    public String getSopPlannedEndDate() {
+        return sopPlannedEndDate;
+    }
+
+    public void setSopPlannedEndDate(String sopPlannedEndDate) {
+        this.sopPlannedEndDate = sopPlannedEndDate;
+    }
+
+    // Constructors
+    public Project() {
+        // Default constructor
+    }
+
+    public Project(String projectName, String projectPIF, String toolName, String toolSerialName, String empCode,
+            String humanResources, String customer, String softwareSOPActualDate, String softwareSOPPlannedDate,
+            String ddeffortsActual, String ddeffortsPlanned, String ddAmountActual, String ddAmountPlanned,
+            String sopActualEndDate, String sopPlannedEndDate) {
+        this.projectName = projectName;
+        this.projectPIF = projectPIF;
+        this.toolName = toolName;
+        this.toolSerialName = toolSerialName;
+        this.empCode = empCode;
+        this.humanResources = humanResources;
+        this.customer = customer;
+        this.softwareSOPActualDate = softwareSOPActualDate;
+        this.softwareSOPPlannedDate = softwareSOPPlannedDate;
+        this.ddeffortsActual = ddeffortsActual;
+        this.ddeffortsPlanned = ddeffortsPlanned;
+        this.ddAmountActual = ddAmountActual;
+        this.ddAmountPlanned = ddAmountPlanned;
+        this.sopActualEndDate = sopActualEndDate;
+        this.sopPlannedEndDate = sopPlannedEndDate;
+    }
+
+    // toString(), equals(), hashCode() methods if needed
+
 }
