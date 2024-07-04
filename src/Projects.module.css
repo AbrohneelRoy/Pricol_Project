@@ -59,7 +59,8 @@
 .projects-controls {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: -30px;
+  padding-top: 70px; /* Add some padding to prevent the content from being covered by the search bar */
 }
 
 .projects-button {
@@ -82,8 +83,12 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   flex: 1;
-  margin-right: 10px; /* Adjusted margin */
-  max-width: 970px;
+  width: 300px;
+  position: fixed;
+  top: 18px; /* Adjust the top position as needed */
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 1000; /* Ensure the search bar is on top of other elements */
 }
 
 .projects-form {

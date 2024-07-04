@@ -48,6 +48,7 @@
 .dashuserInfo {
   font-size: 24px;
   margin: 40px;
+  cursor: pointer;
 }
 
 /* Dashboard Container */
@@ -86,12 +87,7 @@
   margin: 0 10px;
 }
 
-/* Chart Section */
-.chart {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
+
 .viewButton {
   background-color: #137cec;
   color: white;
@@ -167,4 +163,14 @@
 .dropdownContent button:last-child {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+}
+.phaseDataChart {
+  margin-top: 30px;
+  margin-left: 220px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f2f2f2;
+  height: 450px;
+  width: 1400px;
 }

@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './Projects.module.css';
 import logoImage from './image.png';
 import {useNavigate} from 'react-router-dom';
+import * as XLSX from 'xlsx';
 
 
 
@@ -21,6 +22,7 @@ const Employee = () => {
     empCode: '',
     humanResources: '',
     customer: '',
+    phase: '',
     softwareSOPActualDate: '',
     softwareSOPPlannedDate: '',
     ddeffortsActual: '',
@@ -83,6 +85,7 @@ const Employee = () => {
         empCode: '',
         humanResources: '',
         customer: '',
+        phase: '',
         softwareSOPActualDate: '',
         softwareSOPPlannedDate: '',
         ddeffortsActual: '',
@@ -156,8 +159,75 @@ const Employee = () => {
   };
 
   const handleGenerateExcel = () => {
-    // Implement logic to generate Excel file
-    console.log('Generating Excel...');
+    if (selectedProjects.length === 0) {
+      alert('Please select at least one project to generate the Excel file.');
+      return;
+    }
+  
+    // Filter the selected projects
+    const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
+  
+    // Map the data to the desired format
+    const dataToExport = selectedData.map(project => ({
+      'Emp Code': project.empCode,
+      'Human Resources': project.humanResources,
+      'Project Name': project.projectName,
+      'Project PIF': project.projectPIF,
+      'Tool Name': project.toolName,
+      'Tool Serial Name': project.toolSerialName,
+      'Customer': project.customer,
+      'Phase': project.phase,
+      'Software SOP Actual Date': project.softwareSOPActualDate,
+      'Software SOP Planned Date': project.softwareSOPPlannedDate,
+      'D & D Efforts Actual (PHs)': project.ddeffortsActual,
+      'D & D Efforts Planned (PHs)': project.ddeffortsPlanned,
+      'D & D Amount Actual (in thousands)': project.ddAmountActual,
+      'D & D Amount Planned (in thousands)': project.ddAmountPlanned,
+      'SOP Actual End Date': project.sopActualEndDate,
+      'SOP Planned End Date': project.sopPlannedEndDate
+    }));
+  
+    // Create a new workbook and add the data to a sheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+  
+    // Apply header styles
+    const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+      const cell_address = XLSX.utils.encode_cell({ c: C, r: 0 });
+      if (!worksheet[cell_address]) continue;
+      worksheet[cell_address].s = {
+        font: { bold: true },
+        fill: { fgColor: { rgb: "D3D3D3" } } // Light grey background
+      };
+    }
+    
+  
+    // Set column widths
+    const colWidths = [
+      { wch: 20 }, // Project Name
+      { wch: 20 }, // Project PIF
+      { wch: 20 }, // Tool Name
+      { wch: 20 }, // Tool Serial Name
+      { wch: 20 }, // Emp Code
+      { wch: 20 }, // Human Resources
+      { wch: 20 }, // Customer
+      { wch: 15 }, // Phase
+      { wch: 30 }, // Software SOP Actual Date
+      { wch: 30 }, // Software SOP Planned Date
+      { wch: 30 }, // D & D Efforts Actual (PHs)
+      { wch: 30 }, // D & D Efforts Planned (PHs)
+      { wch: 30 }, // D & D Amount Actual (in thousands)
+      { wch: 30 }, // D & D Amount Planned (in thousands)
+      { wch: 30 }, // SOP Actual End Date
+      { wch: 30 }  // SOP Planned End Date
+    ];
+    worksheet['!cols'] = colWidths;
+  
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects');
+  
+    // Generate the Excel file and trigger the download
+    XLSX.writeFile(workbook, 'Employee.xlsx');
   };
 
   const handleGeneratePDF = () => {
@@ -166,6 +236,21 @@ const Employee = () => {
   };
 
   const filteredProjects = projects.filter((project) =>
+    project.projectPIF.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.toolSerialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.empCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.humanResources.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.softwareSOPActualDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.softwareSOPPlannedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddeffortsActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddeffortsPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddAmountActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddAmountPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.sopActualEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.sopPlannedEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.phase.toLowerCase().includes(searchTerm.toLowerCase()) ||
     project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -305,6 +390,14 @@ const Employee = () => {
               />
               <input
                 type="text"
+                name="phase"
+                placeholder="Phase"
+                value={newProject.phase}
+                onChange={handleInputChange}
+                className={styles['projects-input']}
+              />
+              <input
+                type="text"
                 name="softwareSOPActualDate"
                 placeholder="Software SOP Actual Date (dd/mm/yyyy)"
                 value={newProject.softwareSOPActualDate}
@@ -388,6 +481,7 @@ const Employee = () => {
                 <th>Tool Name</th>
                 <th>Tool Serial Name</th>
                 <th>Customer</th>
+                <th>Phase</th>
                 {showExtendedFields && (
                   <>
                     <th>Software SOP Actual Date</th>
@@ -419,6 +513,7 @@ const Employee = () => {
                   <td>{project.toolName}</td>
                   <td>{project.toolSerialName}</td>
                   <td>{project.customer}</td>
+                  <td>{project.phase}</td>
                   {showExtendedFields && (
                     <>
                       <td>{project.softwareSOPActualDate}</td>

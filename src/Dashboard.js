@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Pie } from 'react-chartjs-2';
-import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import logoImage from './image.png';
 
-Chart.register(ArcElement, Tooltip, Legend);
+Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
   const username = localStorage.getItem('username');
   const [projectsCount, setProjectsCount] = useState(0);
   const [employeesCount, setEmployeesCount] = useState(0);
   const [toolsCount, setToolsCount] = useState(0);
+  const [phase1, setPhase1] = useState(0);
+  const [phase2, setPhase2] = useState(0);
+  const [phase3, setPhase3] = useState(0);
+  const [phase4, setPhase4] = useState(0);
+  const [phase5, setPhase5] = useState(0);
+  const [phase6, setPhase6] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -26,40 +32,53 @@ const Dashboard = () => {
       setProjectsCount(response.data.projectCount);
       setEmployeesCount(response.data.empCount);
       setToolsCount(response.data.toolCount);
+      setPhase1(response.data.phase1);
+      setPhase2(response.data.phase2);
+      setPhase3(response.data.phase3);
+      setPhase4(response.data.phase4);
+      setPhase5(response.data.phase5);
+      setPhase6(response.data.phase6);
     } catch (error) {
       console.error('Error fetching counts:', error);
     }
   };
 
-  const data = {
-    labels: ['Projects', 'Employees', 'Tools'],
+  const phaseData = {
+    labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100'],
     datasets: [
       {
-        label: '# of Items',
-        data: [projectsCount, employeesCount, toolsCount],
+        label: 'Phase Counts',
+        data: [phase1, phase2, phase3, phase4, phase5, phase6],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(75, 192, 192, 0.2)'
+          'rgba(255, 99, 132, 0.6)', // Red
+          'rgba(54, 162, 235, 0.6)', // Blue
+          'rgba(255, 206, 86, 0.6)', // Yellow
+          'rgba(75, 192, 192, 0.6)', // Green
+          'rgba(153, 102, 255, 0.6)', // Purple
+          'rgba(255, 159, 64, 0.6)', // Orange
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
           'rgba(54, 162, 235, 1)',
-          'rgba(75, 192, 192, 1)'
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
         ],
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
+  
 
   const handleViewProjects = () => {
     navigate('/projects');
   };
-  
+
   const handleViewEmp = () => {
     navigate('/employee');
   };
-  
+
   const handleViewTool = () => {
     navigate('/tool');
   };
@@ -72,6 +91,7 @@ const Dashboard = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+
   const handleRegister = () => {
     navigate('/register');
   };
@@ -113,8 +133,8 @@ const Dashboard = () => {
               <button className={styles.viewButton} onClick={handleViewTool}>View</button>
             </div>
           </div>
-          <div className={styles.chart}>
-            <Pie data={data} />
+          <div className={styles.phaseDataChart}>
+            <Bar data={phaseData} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
       </div>
