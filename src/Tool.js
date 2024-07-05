@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import styles from './Projects.module.css';
 import logoImage from './image.png';
@@ -8,12 +8,30 @@ import * as XLSX from 'xlsx';
 
 
 const Tool = () => {
+  const columns = [
+    'Tool Name', 'Tool Serial Name','Project PIF', 'Project Name', 'Emp Code', 'Human Resources',
+     'Customer', 'Phase','Software SOP Actual Date',
+    'Software SOP Planned Date', 'D & D Efforts Actual (PHs)', 'D & D Efforts Planned (PHs)',
+    'D & D Amount Actual (in thousands)', 'D & D Amount Planned (in thousands)',
+    'SOP Actual End Date', 'SOP Planned End Date'
+  ];
+
+  const [selectedColumns, setSelectedColumns] = useState([
+    'Tool Name', 'Tool Serial Name','Project PIF', 'Project Name', 'Emp Code', 'Human Resources',
+     'Customer', 'Phase', 'Software SOP Actual Date',
+    'Software SOP Planned Date', 'D & D Efforts Actual (PHs)', 'D & D Efforts Planned (PHs)',
+    'D & D Amount Actual (in thousands)', 'D & D Amount Planned (in thousands)',
+    'SOP Actual End Date', 'SOP Planned End Date'
+  ]);
   const navigate = useNavigate();
   const username = localStorage.getItem('username');
+  const containerRef = useRef(null);
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showExtendedFields, setShowExtendedFields] = useState(true); // Initially show extended fields
+  const [showExtendedFields, setShowExtendedFields] = useState(); // Initially show extended fields
+
   const [newProject, setNewProject] = useState({
     projectPIF: '',
     projectName: '',
@@ -48,9 +66,7 @@ const Tool = () => {
     }
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
+
 
   const handleLogout = () => {
     localStorage.removeItem('username');
@@ -114,6 +130,8 @@ const Tool = () => {
     }
   };
 
+
+
   const handleSelectAll = (event) => {
     setSelectAll(event.target.checked);
     if (event.target.checked) {
@@ -125,15 +143,24 @@ const Tool = () => {
 
   const handleDeleteProjects = async () => {
     try {
-      await Promise.all(
-        selectedProjects.map(async (projectId) => {
-          await axios.delete(`http://192.168.202.228:8080/projects/${projectId}`);
-        })
-      );
-      setProjects(projects.filter((project) => !selectedProjects.includes(project['sno'])));
+      if (selectedProjects.length === projects.length) {
+        // If all projects are selected, truncate the table
+        await axios.delete('http://192.168.202.228:8080/projects/truncate');
+      } 
+      else {
+        // Delete selected projects one by one
+        await Promise.all(
+          selectedProjects.map(async (projectId) => {
+            await axios.delete(`http://192.168.202.228:8080/projects/${projectId}`);
+          })
+        );
+      }
+  
+      // Reload projects after deletion or truncation
+      setProjects([]);
       setSelectedProjects([]);
       setSelectAll(false);
-      fetchProjects(); // Reload projects after deletion
+      fetchProjects();
     } catch (error) {
       console.error('Error deleting projects:', error);
     }
@@ -157,6 +184,14 @@ const Tool = () => {
   const handleToggleExtendedFields = () => {
     setShowExtendedFields(!showExtendedFields);
   };
+  const handleColumnCheckboxChange = (column) => {
+    setSelectedColumns(prevSelectedColumns => 
+      prevSelectedColumns.includes(column)
+        ? prevSelectedColumns.filter(col => col !== column)
+        : [...prevSelectedColumns, column]
+    );
+  };
+  
 
   const handleGenerateExcel = () => {
     if (selectedProjects.length === 0) {
@@ -164,28 +199,73 @@ const Tool = () => {
       return;
     }
   
+    if (selectedColumns.length === 0) {
+      alert('Please select at least one column to generate the Excel file.');
+      return;
+    }
+  
     // Filter the selected projects
     const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
   
-    // Map the data to the desired format
-    const dataToExport = selectedData.map(project => ({
-      'Tool Name': project.toolName,
-      'Tool Serial Name': project.toolSerialName,
-      'Project Name': project.projectName,
-      'Project PIF': project.projectPIF,
-      'Emp Code': project.empCode,
-      'Human Resources': project.humanResources,
-      'Customer': project.customer,
-      'Phase': project.phase,
-      'Software SOP Actual Date': project.softwareSOPActualDate,
-      'Software SOP Planned Date': project.softwareSOPPlannedDate,
-      'D & D Efforts Actual (PHs)': project.ddeffortsActual,
-      'D & D Efforts Planned (PHs)': project.ddeffortsPlanned,
-      'D & D Amount Actual (in thousands)': project.ddAmountActual,
-      'D & D Amount Planned (in thousands)': project.ddAmountPlanned,
-      'SOP Actual End Date': project.sopActualEndDate,
-      'SOP Planned End Date': project.sopPlannedEndDate
-    }));
+    // Map the data to the desired format, including only selected columns
+    const dataToExport = selectedData.map(project => {
+      const filteredProject = {};
+      selectedColumns.forEach(column => {
+        switch (column) {
+          case 'Emp Code':
+            filteredProject['Emp Code'] = project.empCode;
+            break;
+          case 'Human Resources':
+            filteredProject['Human Resources'] = project.humanResources;
+            break;
+          case 'Project PIF':
+            filteredProject['Project PIF'] = project.projectPIF;
+            break;
+          case 'Project Name':
+            filteredProject['Project Name'] = project.projectName;
+            break;
+          case 'Tool Name':
+            filteredProject['Tool Name'] = project.toolName;
+            break;
+          case 'Tool Serial Name':
+            filteredProject['Tool Serial Name'] = project.toolSerialName;
+            break;
+          case 'Customer':
+            filteredProject['Customer'] = project.customer;
+            break;
+          case 'Phase':
+            filteredProject['Phase'] = project.phase;
+            break;
+          case 'Software SOP Actual Date':
+            filteredProject['Software SOP Actual Date'] = project.softwareSOPActualDate;
+            break;
+          case 'Software SOP Planned Date':
+            filteredProject['Software SOP Planned Date'] = project.softwareSOPPlannedDate;
+            break;
+          case 'D & D Efforts Actual (PHs)':
+            filteredProject['D & D Efforts Actual (PHs)'] = project.ddeffortsActual;
+            break;
+          case 'D & D Efforts Planned (PHs)':
+            filteredProject['D & D Efforts Planned (PHs)'] = project.ddeffortsPlanned;
+            break;
+          case 'D & D Amount Actual (in thousands)':
+            filteredProject['D & D Amount Actual (in thousands)'] = project.ddAmountActual;
+            break;
+          case 'D & D Amount Planned (in thousands)':
+            filteredProject['D & D Amount Planned (in thousands)'] = project.ddAmountPlanned;
+            break;
+          case 'SOP Actual End Date':
+            filteredProject['SOP Actual End Date'] = project.sopActualEndDate;
+            break;
+          case 'SOP Planned End Date':
+            filteredProject['SOP Planned End Date'] = project.sopPlannedEndDate;
+            break;
+          default:
+            break;
+        }
+      });
+      return filteredProject;
+    });
   
     // Create a new workbook and add the data to a sheet
     const workbook = XLSX.utils.book_new();
@@ -201,27 +281,9 @@ const Tool = () => {
         fill: { fgColor: { rgb: "D3D3D3" } } // Light grey background
       };
     }
-    
   
-    // Set column widths
-    const colWidths = [
-      { wch: 20 }, // Project Name
-      { wch: 20 }, // Project PIF
-      { wch: 20 }, // Tool Name
-      { wch: 20 }, // Tool Serial Name
-      { wch: 20 }, // Emp Code
-      { wch: 20 }, // Human Resources
-      { wch: 20 }, // Customer
-      { wch: 15 }, // Phase
-      { wch: 30 }, // Software SOP Actual Date
-      { wch: 30 }, // Software SOP Planned Date
-      { wch: 30 }, // D & D Efforts Actual (PHs)
-      { wch: 30 }, // D & D Efforts Planned (PHs)
-      { wch: 30 }, // D & D Amount Actual (in thousands)
-      { wch: 30 }, // D & D Amount Planned (in thousands)
-      { wch: 30 }, // SOP Actual End Date
-      { wch: 30 }  // SOP Planned End Date
-    ];
+    // Set column widths dynamically based on the selected columns
+    const colWidths = selectedColumns.map(() => ({ wch: 20 }));
     worksheet['!cols'] = colWidths;
   
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects');
@@ -254,6 +316,40 @@ const Tool = () => {
     project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  
+  const handleSearchButtonClick = () => {
+    setSearchTerm(searchInput);
+  };
+
+  const scrollToHighlightedText = useCallback(() => {
+    if (containerRef.current && searchTerm) {
+      const highlightedElement = containerRef.current.querySelector(`.${styles.highlight}`);
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [searchTerm]);
+  
+  
+  
+  const highlightText = (text, term) => {
+    if (!term) return text;
+    
+    const regex = new RegExp(`\\b(${term.trim()})\\b`, 'gi');
+    return text.split(regex).map((part, index) => (
+      regex.test(part) ? <span key={index} className={styles['highlight']}>{part}</span> : part
+    ));
+  };
+  
+  
+  useEffect(() => {
+    scrollToHighlightedText();
+  }, [searchTerm, scrollToHighlightedText]);
+
   return (
     <div className={styles['projects-container']}>
       <header className={styles['projects-header']}>
@@ -264,70 +360,90 @@ const Tool = () => {
           <div className={styles['projects-userInfo']}>{username}</div>
         </div>
       </header>
+      {showExtendedFields && (
+        <div className={styles['column-selector']}>
+          {columns.map(column => (
+            <div key={column}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedColumns.includes(column)}
+                  onChange={() => handleColumnCheckboxChange(column)}
+                />
+                {column}
+              </label>
+            </div>
+          ))}
+        </div>
+      )}
+          
       <div className={styles['projects-mainContent']}>
-      <div className={styles['nav-wrapper']}>
-      <ul className={styles['nav-navList']}>
-        <li>
-          <button className={styles['nav-navButton']} onClick={() => navigate('/dashboard')}>
-            Back to Home
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={() => setShowAddForm(!showAddForm)}>
-            Add
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleModifyProject} disabled={selectedProjects.length !== 1}>
-            Modify
-          </button>
-        </li>
-        <li>
-          {username === 'Admin' &&
-            <button className={styles['nav-navButton']} onClick={handleDeleteProjects} disabled={selectedProjects.length === 0}>
-            Delete
-          </button>
-            }
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleToggleExtendedFields}>
-            {showExtendedFields ? 'Hide Details' : 'Show Details'}
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleGenerateExcel}>
-            Generate Excel
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleGeneratePDF}>
-            Generate Pdf
-          </button>
-        </li>
-        <li>
-            { username === 'Admin' &&
-          <button className={styles['nav-navButton']} onClick={() => navigate('/register')}>
-            Register
-          </button>
-            }
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleLogout}>
-            Log Out
-          </button>
-        </li>
-      </ul>
-    </div>
+        <div className={styles['nav-wrapper']}>
+        <ul className={styles['nav-navList']}>
+          <li>
+            <button className={styles['nav-navButton']} onClick={() => navigate('/dashboard')}>
+              Back to Home
+            </button>
+          </li>
+          <li>
+            <button className={styles['nav-navButton']} onClick={() => setShowAddForm(!showAddForm)}>
+              Add
+            </button>
+          </li>
+          <li>
+            <button className={styles['nav-navButton']} onClick={handleModifyProject} disabled={selectedProjects.length !== 1}>
+              Modify
+            </button>
+          </li>
+          <li>
+            {username === 'Admin' &&
+              <button className={styles['nav-navButton']} onClick={handleDeleteProjects} disabled={selectedProjects.length === 0}>
+              Delete
+            </button>
+              }
+          </li>
+          <li>
+            <button className={styles['nav-navButton']} onClick={handleToggleExtendedFields}>
+              {showExtendedFields ? 'Hide Details' : 'Show Details'}
+            </button>
+          </li>
+          <li>
+            <button className={styles['nav-navButton']} onClick={handleGenerateExcel}>
+              Generate Excel
+            </button>
+          </li>
+          <li>
+            <button className={styles['nav-navButton']} onClick={handleGeneratePDF}>
+              Generate Pdf
+            </button>
+          </li>
+          <li>
+              { username === 'Admin' &&
+            <button className={styles['nav-navButton']} onClick={() => navigate('/register')}>
+              Register
+            </button>
+              }
+          </li>
+          <li>
+            <button className={styles['nav-navButton']} onClick={handleLogout}>
+              Log Out
+            </button>
+          </li>
+        </ul>
+      </div>
         
-        <div className={styles['projects-content']}>
-          <div className={styles['projects-controls']}>
+        <div className={styles['projects-content']} ref={containerRef}>
+        <div className={styles['projects-controls']}>
             <input
               type="text"
               placeholder="Search..."
-              value={searchTerm}
-              onChange={handleSearch}
+              value={searchInput}
+              onChange={handleSearchInputChange}
               className={styles['projects-search']}
             />
+            <button onClick={handleSearchButtonClick} className={styles['projects-search-button']}>
+              Search
+            </button>
           </div>
           {showAddForm && (
             <div className={styles['projects-form']}>
@@ -474,30 +590,29 @@ const Tool = () => {
                 <th>
                   <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
                 </th>
-                <th>Tool Name</th>
-                <th>Tool Serial Name</th>
-                <th>Project Name</th>
-                <th>Project PIF</th>
-                <th>Emp Code</th>
-                <th>Human Resources</th>
-                <th>Customer</th>
-                <th>Phase</th>
-                {showExtendedFields && (
-                  <>
-                    <th>Software SOP Actual Date</th>
-                    <th>Software SOP Planned Date</th>
-                    <th>D & D Efforts Actual (PHs)</th>
-                    <th>D & D Efforts Planned (PHs)</th>
-                    <th>D & D Amount Actual (in thousands)</th>
-                    <th>D & D Amount Planned (in thousands)</th>
-                    <th>SOP Actual End Date</th>
-                    <th>SOP Planned End Date</th>
-                  </>
-                )}
+                {columns.map(column => (
+                  selectedColumns.includes(column) && <th key={column}>{column}</th>
+                ))}
+                {selectedColumns.includes('Tool Name')}
+                {selectedColumns.includes('Tool Serial Name')}
+                {selectedColumns.includes('Project PIF')}
+                {selectedColumns.includes('Project Name')}
+                {selectedColumns.includes('Emp Code')}
+                {selectedColumns.includes('Human Resources')}
+                {selectedColumns.includes('Customer')}
+                {selectedColumns.includes('Phase')}
+                {selectedColumns.includes('Software SOP Actual Date')}
+                {selectedColumns.includes('Software SOP Planned Date')}
+                {selectedColumns.includes('D & D Efforts Actual (PHs)')}
+                {selectedColumns.includes('D & D Efforts Planned (PHs)')}
+                {selectedColumns.includes('D & D Amount Actual (in thousands)')}
+                {selectedColumns.includes('D & D Amount Planned (in thousands)')}
+                {selectedColumns.includes('SOP Actual End Date')}
+                {selectedColumns.includes('SOP Planned End Date')}
               </tr>
             </thead>
             <tbody>
-              {filteredProjects.map((project) => (
+              {projects.map((project) => (
                 <tr key={project['sno']}>
                   <td>
                     <input
@@ -506,26 +621,22 @@ const Tool = () => {
                       onChange={(event) => handleCheckboxChange(event, project['sno'])}
                     />
                   </td>
-                  <td>{project.toolName}</td>
-                  <td>{project.toolSerialName}</td>
-                  <td>{project.projectName}</td>
-                  <td>{project.projectPIF}</td>
-                  <td>{project.empCode}</td>
-                  <td>{project.humanResources}</td>
-                  <td>{project.customer}</td>
-                  <td>{project.phase}</td>
-                  {showExtendedFields && (
-                    <>
-                      <td>{project.softwareSOPActualDate}</td>
-                      <td>{project.softwareSOPPlannedDate}</td>
-                      <td>{project.ddeffortsActual}</td>
-                      <td>{project.ddeffortsPlanned}</td>
-                      <td>{project.ddAmountActual}</td>
-                      <td>{project.ddAmountPlanned}</td>
-                      <td>{project.sopActualEndDate}</td>
-                      <td>{project.sopPlannedEndDate}</td>
-                    </>
-                  )}
+                  {selectedColumns.includes('Tool Name') && <td>{highlightText(project.toolName, searchTerm)}</td>}
+                  {selectedColumns.includes('Tool Serial Name') && <td>{highlightText(project.toolSerialName, searchTerm)}</td>}
+                  {selectedColumns.includes('Project PIF') && <td>{highlightText(project.projectPIF, searchTerm)}</td>}
+                  {selectedColumns.includes('Project Name') && <td>{highlightText(project.projectName, searchTerm)}</td>}
+                  {selectedColumns.includes('Emp Code') && <td>{highlightText(project.empCode, searchTerm)}</td>}
+                  {selectedColumns.includes('Human Resources') && <td>{highlightText(project.humanResources, searchTerm)}</td>}
+                  {selectedColumns.includes('Customer') && <td>{highlightText(project.customer, searchTerm)}</td>}
+                  {selectedColumns.includes('Phase') && <td>{highlightText(project.phase, searchTerm)}</td>}
+                  {selectedColumns.includes('Software SOP Actual Date') && <td>{highlightText(project.softwareSOPActualDate, searchTerm)}</td>}
+                  {selectedColumns.includes('Software SOP Planned Date') && <td>{highlightText(project.softwareSOPPlannedDate, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Efforts Actual (PHs)') && <td>{highlightText(project.ddeffortsActual, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Efforts Planned (PHs)') && <td>{highlightText(project.ddeffortsPlanned, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Amount Actual (in thousands)') && <td>{highlightText(project.ddAmountActual, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Amount Planned (in thousands)') && <td>{highlightText(project.ddAmountPlanned, searchTerm)}</td>}
+                  {selectedColumns.includes('SOP Actual End Date') && <td>{highlightText(project.sopActualEndDate, searchTerm)}</td>}
+                  {selectedColumns.includes('SOP Planned End Date') && <td>{highlightText(project.sopPlannedEndDate, searchTerm)}</td>}
                 </tr>
               ))}
             </tbody>

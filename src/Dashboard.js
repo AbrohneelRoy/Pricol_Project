@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [phase4, setPhase4] = useState(0);
   const [phase5, setPhase5] = useState(0);
   const [phase6, setPhase6] = useState(0);
+  const [phase7, setPhase7] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -38,17 +39,18 @@ const Dashboard = () => {
       setPhase4(response.data.phase4);
       setPhase5(response.data.phase5);
       setPhase6(response.data.phase6);
+      setPhase7(response.data.phase7);
     } catch (error) {
       console.error('Error fetching counts:', error);
     }
   };
 
   const phaseData = {
-    labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100'],
+    labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100','SOP'],
     datasets: [
       {
         label: 'Phase Counts',
-        data: [phase1, phase2, phase3, phase4, phase5, phase6],
+        data: [phase1, phase2, phase3, phase4, phase5, phase6,phase7],
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)', // Red
           'rgba(54, 162, 235, 0.6)', // Blue
@@ -56,6 +58,7 @@ const Dashboard = () => {
           'rgba(75, 192, 192, 0.6)', // Green
           'rgba(153, 102, 255, 0.6)', // Purple
           'rgba(255, 159, 64, 0.6)', // Orange
+          'rgba(50, 205, 50, 0.6)', // Lime
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
@@ -64,6 +67,7 @@ const Dashboard = () => {
           'rgba(75, 192, 192, 1)',
           'rgba(153, 102, 255, 1)',
           'rgba(255, 159, 64, 1)',
+          'rgba(50, 205, 50, 1)',
         ],
         borderWidth: 1,
       },

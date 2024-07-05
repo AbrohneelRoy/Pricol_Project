@@ -1,11 +1,9 @@
-/* Dashboard Wrapper */
 .dashboardWrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensures minimum height to cover viewport */
+  min-height: 100vh;
 }
 
-/* Dashboard Header */
 .dashboardheader {
   background-color: #137cec;
   color: white;
@@ -20,16 +18,14 @@
   z-index: 1000;
 }
 
-/* Top Bar */
 .dashtopBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px; /* Matches header height */
+  height: 70px; 
   width: 100%;
 }
 
-/* Dashboard Logo */
 .dashlogo {
   display: flex;
   align-items: center;
@@ -44,40 +40,34 @@
   margin-right: 10px;
 }
 
-/* User Info */
 .dashuserInfo {
   font-size: 24px;
   margin: 40px;
   cursor: pointer;
 }
 
-/* Dashboard Container */
 .dashboardContainer {
   display: flex;
   flex: 1;
-  margin-top: 70px; /* Adjust for fixed header */
+  margin-top: 70px; 
 }
 
-/* Main Content */
 .mainContent {
   flex: 1;
   padding: 20px;
 }
 
-/* Username */
 .username {
   font-size: 32px;
   margin-bottom: 20px;
 }
 
-/* Statistics Section */
 .stats {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
 }
 
-/* Individual Statistic Item */
 .statItem {
   background-color: #f0f0f0;
   padding: 20px;
@@ -105,7 +95,6 @@
 .viewButton:hover {
   background-color: #0056b3;
 }
-/* Dropdown Container */
 .dashuserInfo {
   position: relative;
   display: inline-block;
@@ -119,7 +108,7 @@
 .dropdownContent {
   display: none;
   position: absolute;
-  top: 32px; /* Adjusted to align below the header */
+  top: 32px; 
   right: -45px;
   background-color: #fff;
   border: 1px solid #ddd;

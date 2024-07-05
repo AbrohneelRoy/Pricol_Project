@@ -33,21 +33,21 @@
 }
 
 .projects-logoImg {
-  height: 60px; /* Adjusted height */
-  max-width: 100%; /* Ensures responsiveness */
+  height: 60px;
+  max-width: 100%;
   object-fit: contain;
   margin-right: 10px;
 }
 
 .projects-userInfo {
-  font-size: 24px; /* Reduced font size */
-  margin-right: 40px; /* Adjusted margin */
+  font-size: 24px; 
+  margin-right: 40px; 
 }
 
 .projects-mainContent {
   display: flex;
   flex: 1;
-  margin-top: 70px; /* Adjust for fixed header height */
+  margin-top: 70px; 
 }
 
 .projects-content {
@@ -60,7 +60,7 @@
   display: flex;
   align-items: center;
   margin-bottom: -30px;
-  padding-top: 70px; /* Add some padding to prevent the content from being covered by the search bar */
+  padding-top: 70px; 
 }
 
 .projects-button {
@@ -85,15 +85,15 @@
   flex: 1;
   width: 300px;
   position: fixed;
-  top: 18px; /* Adjust the top position as needed */
-  left: 80%;
+  top: 18px; 
+  left: 75%;
   transform: translateX(-50%);
-  z-index: 1000; /* Ensure the search bar is on top of other elements */
+  z-index: 1000; 
 }
 
 .projects-form {
   margin-bottom: 20px;
-  max-width: 600px; /* Limit form width for better readability */
+  max-width: 600px; 
 }
 
 .projects-form input {
@@ -102,24 +102,26 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: calc(100% - 22px); /* Adjusted width to accommodate borders and padding */
+  width: calc(100% - 22px); 
   box-sizing: border-box;
 }
 
 .projects-table {
+  margin-top: 10px;
+  margin-left: 7px;
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
   white-space: nowrap;
-  overflow-x: auto; /* Ensure horizontal scrolling if needed */
+  overflow-x: auto; 
 }
 
 .projects-table th,
 .projects-table td {
   border: 1px solid #ddd;
-  padding: 10px; /* Increased padding for better spacing */
+  padding: 10px; 
   text-align: left;
-  min-width: 120px; /* Adjusted minimum width for better alignment */
+  min-width: 120px; 
 }
 
 .projects-table th {
@@ -136,7 +138,6 @@
 }
 
 
-/* Projects.module.css */
 
 .nav-wrapper {
   background-color: #0056b3;
@@ -146,7 +147,7 @@
   position: fixed;
   top: 70px;
   left: 0;
-  overflow-y: auto; /* Enable scrolling if content exceeds viewport */
+  overflow-y: auto; 
 }
 
 .nav-navList {
@@ -190,3 +191,61 @@
   color: #0056b3;
 }
 
+.column-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 100px;
+  margin-left: 250px;
+  margin-right: 150px;
+  margin-bottom: -100px;
+  background-color: #f9f9f9;
+}
+
+.column-selector div {
+  margin: 5px 0;
+  position: relative;
+}
+
+.column-selector label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.column-selector input[type="checkbox"] {
+  cursor: pointer;
+  margin-right: 10px;
+  position: relative;
+  z-index: 1;
+}
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}
+.projects-search-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0059b8;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px; /* Add margin to the left to space it out from the search bar */
+  position: fixed;
+  top: 21px;
+  left: 86%;
+  transform: translateX(-50%);
+  z-index: 1000; 
+}
+
+.projects-search-button:hover {
+  background-color: #0099ff;
+}
+
+.highlight {
+  background-color: yellow; 
+}

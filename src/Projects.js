@@ -1,17 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import styles from './Projects.module.css';
 import logoImage from './image.png';
 import {useNavigate} from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Projects = () => {
+  const columns = [
+    'Project PIF', 'Project Name', 'Emp Code', 'Human Resources','Tool Name', 'Tool Serial Name',
+     'Customer', 'Phase','Software SOP Actual Date',
+    'Software SOP Planned Date', 'D & D Efforts Actual (PHs)', 'D & D Efforts Planned (PHs)',
+    'D & D Amount Actual (in thousands)', 'D & D Amount Planned (in thousands)',
+    'SOP Actual End Date', 'SOP Planned End Date'
+  ];
+  const [selectedColumns, setSelectedColumns] = useState([
+    'Project PIF', 'Project Name', 'Emp Code', 'Human Resources','Tool Name', 'Tool Serial Name',
+     'Customer', 'Phase', 'Software SOP Actual Date',
+    'Software SOP Planned Date', 'D & D Efforts Actual (PHs)', 'D & D Efforts Planned (PHs)',
+    'D & D Amount Actual (in thousands)', 'D & D Amount Planned (in thousands)',
+    'SOP Actual End Date', 'SOP Planned End Date'
+  ]);
   const navigate = useNavigate();
   const username = localStorage.getItem('username');
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showExtendedFields, setShowExtendedFields] = useState(true); // Initially show extended fields
+  const [showExtendedFields, setShowExtendedFields] = useState(); 
+  const containerRef = useRef(null);
   const [newProject, setNewProject] = useState({
     projectPIF: '',
     projectName: '',
@@ -37,6 +55,9 @@ const Projects = () => {
     fetchProjects();
   }, []);
 
+
+  
+
   const fetchProjects = async () => {
     try {
       const response = await axios.get('http://192.168.202.228:8080/projects');
@@ -50,9 +71,34 @@ const Projects = () => {
     navigate('/login', { replace: true });
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const handleSelectAll = (event) => {
+    setSelectAll(event.target.checked);
+    if (event.target.checked) {
+      setSelectedProjects(filteredProjects.map((project) => project['sno']));
+    } else {
+      setSelectedProjects([]);
+    }
   };
+  const filteredProjects = projects.filter((project) =>
+    project.projectPIF.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.toolSerialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.empCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.humanResources.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.softwareSOPActualDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.softwareSOPPlannedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddeffortsActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddeffortsPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddAmountActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.ddAmountPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.sopActualEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.sopPlannedEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.phase.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -69,7 +115,7 @@ const Projects = () => {
       window.alert('At least one field is required.');
       return;
     }
-
+  
     try {
       const response = await axios.post('http://192.168.202.228:8080/projects', newProject);
       setProjects([...projects, response.data.project]);
@@ -92,16 +138,13 @@ const Projects = () => {
         sopActualEndDate: '',
         sopPlannedEndDate: ''
       });
-      fetchProjects(); // Reload projects after adding
+      fetchProjects();
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        window.alert('Project with the same name already exists.');
-      } else {
-        window.alert('Error adding project.');
-      }
+      window.alert('Error adding project.');
       console.error('Error adding project:', error);
     }
   };
+  
 
   const handleCheckboxChange = (event, projectId) => {
     if (event.target.checked) {
@@ -111,30 +154,29 @@ const Projects = () => {
     }
   };
 
-  const handleSelectAll = (event) => {
-    setSelectAll(event.target.checked);
-    if (event.target.checked) {
-      setSelectedProjects(filteredProjects.map((project) => project['sno']));
-    } else {
-      setSelectedProjects([]);
-    }
-  };
-
+  
   const handleDeleteProjects = async () => {
     try {
-      await Promise.all(
-        selectedProjects.map(async (projectId) => {
-          await axios.delete(`http://192.168.202.228:8080/projects/${projectId}`);
-        })
-      );
-      setProjects(projects.filter((project) => !selectedProjects.includes(project['sno'])));
+      if (selectedProjects.length === projects.length) {
+        await axios.delete('http://192.168.202.228:8080/projects/truncate');
+      } 
+      else {
+        await Promise.all(
+          selectedProjects.map(async (projectId) => {
+            await axios.delete(`http://192.168.202.228:8080/projects/${projectId}`);
+          })
+        );
+      }
+  
+      setProjects([]);
       setSelectedProjects([]);
       setSelectAll(false);
-      fetchProjects(); // Reload projects after deletion
+      fetchProjects();
     } catch (error) {
       console.error('Error deleting projects:', error);
     }
   };
+  
 
   const handleModifyProject = async () => {
     if (selectedProjects.length !== 1) {
@@ -144,8 +186,8 @@ const Projects = () => {
   
     try {
       const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
-      setNewProject(response.data); // Update newProject state with fetched data
-      setShowAddForm(true); // Show the form for modification
+      setNewProject(response.data);
+      setShowAddForm(true); 
     } catch (error) {
       console.error('Error fetching project for modification:', error);
     }
@@ -155,6 +197,14 @@ const Projects = () => {
   const handleToggleExtendedFields = () => {
     setShowExtendedFields(!showExtendedFields);
   };
+  const handleColumnCheckboxChange = (column) => {
+    setSelectedColumns(prevSelectedColumns => 
+      prevSelectedColumns.includes(column)
+        ? prevSelectedColumns.filter(col => col !== column)
+        : [...prevSelectedColumns, column]
+    );
+  };
+  
 
   const handleGenerateExcel = () => {
     if (selectedProjects.length === 0) {
@@ -162,28 +212,73 @@ const Projects = () => {
       return;
     }
   
+    if (selectedColumns.length === 0) {
+      alert('Please select at least one column to generate the Excel file.');
+      return;
+    }
+  
     // Filter the selected projects
     const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
   
-    // Map the data to the desired format
-    const dataToExport = selectedData.map(project => ({
-      'Project Name': project.projectName,
-      'Project PIF': project.projectPIF,
-      'Tool Name': project.toolName,
-      'Tool Serial Name': project.toolSerialName,
-      'Emp Code': project.empCode,
-      'Human Resources': project.humanResources,
-      'Customer': project.customer,
-      'Phase': project.phase,
-      'Software SOP Actual Date': project.softwareSOPActualDate,
-      'Software SOP Planned Date': project.softwareSOPPlannedDate,
-      'D & D Efforts Actual (PHs)': project.ddeffortsActual,
-      'D & D Efforts Planned (PHs)': project.ddeffortsPlanned,
-      'D & D Amount Actual (in thousands)': project.ddAmountActual,
-      'D & D Amount Planned (in thousands)': project.ddAmountPlanned,
-      'SOP Actual End Date': project.sopActualEndDate,
-      'SOP Planned End Date': project.sopPlannedEndDate
-    }));
+    // Map the data to the desired format, including only selected columns
+    const dataToExport = selectedData.map(project => {
+      const filteredProject = {};
+      selectedColumns.forEach(column => {
+        switch (column) {
+          case 'Emp Code':
+            filteredProject['Emp Code'] = project.empCode;
+            break;
+          case 'Human Resources':
+            filteredProject['Human Resources'] = project.humanResources;
+            break;
+          case 'Project PIF':
+            filteredProject['Project PIF'] = project.projectPIF;
+            break;
+          case 'Project Name':
+            filteredProject['Project Name'] = project.projectName;
+            break;
+          case 'Tool Name':
+            filteredProject['Tool Name'] = project.toolName;
+            break;
+          case 'Tool Serial Name':
+            filteredProject['Tool Serial Name'] = project.toolSerialName;
+            break;
+          case 'Customer':
+            filteredProject['Customer'] = project.customer;
+            break;
+          case 'Phase':
+            filteredProject['Phase'] = project.phase;
+            break;
+          case 'Software SOP Actual Date':
+            filteredProject['Software SOP Actual Date'] = project.softwareSOPActualDate;
+            break;
+          case 'Software SOP Planned Date':
+            filteredProject['Software SOP Planned Date'] = project.softwareSOPPlannedDate;
+            break;
+          case 'D & D Efforts Actual (PHs)':
+            filteredProject['D & D Efforts Actual (PHs)'] = project.ddeffortsActual;
+            break;
+          case 'D & D Efforts Planned (PHs)':
+            filteredProject['D & D Efforts Planned (PHs)'] = project.ddeffortsPlanned;
+            break;
+          case 'D & D Amount Actual (in thousands)':
+            filteredProject['D & D Amount Actual (in thousands)'] = project.ddAmountActual;
+            break;
+          case 'D & D Amount Planned (in thousands)':
+            filteredProject['D & D Amount Planned (in thousands)'] = project.ddAmountPlanned;
+            break;
+          case 'SOP Actual End Date':
+            filteredProject['SOP Actual End Date'] = project.sopActualEndDate;
+            break;
+          case 'SOP Planned End Date':
+            filteredProject['SOP Planned End Date'] = project.sopPlannedEndDate;
+            break;
+          default:
+            break;
+        }
+      });
+      return filteredProject;
+    });
   
     // Create a new workbook and add the data to a sheet
     const workbook = XLSX.utils.book_new();
@@ -199,27 +294,9 @@ const Projects = () => {
         fill: { fgColor: { rgb: "D3D3D3" } } // Light grey background
       };
     }
-    
   
-    // Set column widths
-    const colWidths = [
-      { wch: 20 }, // Project Name
-      { wch: 20 }, // Project PIF
-      { wch: 20 }, // Tool Name
-      { wch: 20 }, // Tool Serial Name
-      { wch: 20 }, // Emp Code
-      { wch: 20 }, // Human Resources
-      { wch: 20 }, // Customer
-      { wch: 15 }, // Phase
-      { wch: 30 }, // Software SOP Actual Date
-      { wch: 30 }, // Software SOP Planned Date
-      { wch: 30 }, // D & D Efforts Actual (PHs)
-      { wch: 30 }, // D & D Efforts Planned (PHs)
-      { wch: 30 }, // D & D Amount Actual (in thousands)
-      { wch: 30 }, // D & D Amount Planned (in thousands)
-      { wch: 30 }, // SOP Actual End Date
-      { wch: 30 }  // SOP Planned End Date
-    ];
+    // Set column widths dynamically based on the selected columns
+    const colWidths = selectedColumns.map(() => ({ wch: 30 }));
     worksheet['!cols'] = colWidths;
   
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects');
@@ -229,29 +306,145 @@ const Projects = () => {
   };
 
   const handleGeneratePDF = () => {
-    // Implement logic to generate PDF file
-    console.log('Generating PDF...');
+    if (selectedProjects.length === 0) {
+      alert('Please select at least one project to generate the PDF file.');
+      return;
+    }
+  
+    if (selectedColumns.length === 0) {
+      alert('Please select at least one column to generate the PDF file.');
+      return;
+    }
+  
+    // Filter the selected projects
+    const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
+  
+    // Map the data to the desired format, including only selected columns
+    const dataToExport = selectedData.map(project => {
+      const filteredProject = [];
+      selectedColumns.forEach(column => {
+        switch (column) {
+          case 'Emp Code':
+            filteredProject.push(project.empCode);
+            break;
+          case 'Human Resources':
+            filteredProject.push(project.humanResources);
+            break;
+          case 'Project PIF':
+            filteredProject.push(project.projectPIF);
+            break;
+          case 'Project Name':
+            filteredProject.push(project.projectName);
+            break;
+          case 'Tool Name':
+            filteredProject.push(project.toolName);
+            break;
+          case 'Tool Serial Name':
+            filteredProject.push(project.toolSerialName);
+            break;
+          case 'Customer':
+            filteredProject.push(project.customer);
+            break;
+          case 'Phase':
+            filteredProject.push(project.phase);
+            break;
+          case 'Software SOP Actual Date':
+            filteredProject.push(project.softwareSOPActualDate);
+            break;
+          case 'Software SOP Planned Date':
+            filteredProject.push(project.softwareSOPPlannedDate);
+            break;
+          case 'D & D Efforts Actual (PHs)':
+            filteredProject.push(project.ddeffortsActual);
+            break;
+          case 'D & D Efforts Planned (PHs)':
+            filteredProject.push(project.ddeffortsPlanned);
+            break;
+          case 'D & D Amount Actual (in thousands)':
+            filteredProject.push(project.ddAmountActual);
+            break;
+          case 'D & D Amount Planned (in thousands)':
+            filteredProject.push(project.ddAmountPlanned);
+            break;
+          case 'SOP Actual End Date':
+            filteredProject.push(project.sopActualEndDate);
+            break;
+          case 'SOP Planned End Date':
+            filteredProject.push(project.sopPlannedEndDate);
+            break;
+          default:
+            break;
+        }
+      });
+      return filteredProject;
+    });
+  
+    const doc = new jsPDF('landscape');
+  
+    // Add a title to the PDF
+    doc.text('Projects Report', 14, 10);
+  
+    // Add table to PDF
+    doc.autoTable({
+      head: [selectedColumns],
+      body: dataToExport,
+      startY: 20,
+      theme: 'striped',
+      styles: {
+        fontSize: 8,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [211, 211, 211], // Light grey background for headers
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
+      },
+      columnStyles: {
+        // Adjust column widths
+        0: { cellWidth: 'auto' },
+      },
+    });
+  
+    // Save the PDF
+    doc.save('Projects.pdf');
   };
 
-  const filteredProjects = projects.filter((project) =>
-    project.projectPIF.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.toolSerialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.empCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.humanResources.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.softwareSOPActualDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.softwareSOPPlannedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddeffortsActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddeffortsPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddAmountActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddAmountPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.sopActualEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.sopPlannedEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.phase.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
 
+  
+  const handleSearchButtonClick = () => {
+    setSearchTerm(searchInput);
+  };
+
+  const scrollToHighlightedText = useCallback(() => {
+    if (containerRef.current && searchTerm) {
+      const highlightedElement = containerRef.current.querySelector(`.${styles.highlight}`);
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [searchTerm]);
+  
+  
+  
+  const highlightText = (text, term) => {
+    if (!term) return text;
+    
+    const regex = new RegExp(`\\b(${term.trim()})\\b`, 'gi');
+    return text.split(regex).map((part, index) => (
+      regex.test(part) ? <span key={index} className={styles['highlight']}>{part}</span> : part
+    ));
+  };
+  
+  
+  useEffect(() => {
+    scrollToHighlightedText();
+  }, [searchTerm, scrollToHighlightedText]);
+  
+  
+  
   return (
     <div className={styles['projects-container']}>
       <header className={styles['projects-header']}>
@@ -262,6 +455,22 @@ const Projects = () => {
           <div className={styles['projects-userInfo']}>{username}</div>
         </div>
       </header>
+      {showExtendedFields && (
+        <div className={styles['column-selector']}>
+          {columns.map(column => (
+            <div key={column}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedColumns.includes(column)}
+                  onChange={() => handleColumnCheckboxChange(column)}
+                />
+                {column}
+              </label>
+            </div>
+          ))}
+        </div>
+      )}
       <div className={styles['projects-mainContent']}>
       <div className={styles['nav-wrapper']}>
       <ul className={styles['nav-navList']}>
@@ -316,15 +525,18 @@ const Projects = () => {
         </li>
       </ul>
     </div>
-        <div className={styles['projects-content']}>
+        <div className={styles['projects-content']} ref={containerRef}>
           <div className={styles['projects-controls']}>
             <input
               type="text"
               placeholder="Search..."
-              value={searchTerm}
-              onChange={handleSearch}
+              value={searchInput}
+              onChange={handleSearchInputChange}
               className={styles['projects-search']}
             />
+            <button onClick={handleSearchButtonClick} className={styles['projects-search-button']}>
+              Search
+            </button>
           </div>
           {showAddForm && (
             <div className={styles['projects-form']}>
@@ -471,30 +683,29 @@ const Projects = () => {
                 <th>
                   <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
                 </th>
-                <th>Project Name</th>
-                <th>Project PIF</th>
-                <th>Tool Name</th>
-                <th>Tool Serial Name</th>
-                <th>Emp Code</th>
-                <th>Human Resources</th>
-                <th>Customer</th>
-                <th>Phase</th>
-                {showExtendedFields && (
-                  <>
-                    <th>Software SOP Actual Date</th>
-                    <th>Software SOP Planned Date</th>
-                    <th>D & D Efforts Actual (PHs)</th>
-                    <th>D & D Efforts Planned (PHs)</th>
-                    <th>D & D Amount Actual (in thousands)</th>
-                    <th>D & D Amount Planned (in thousands)</th>
-                    <th>SOP Actual End Date</th>
-                    <th>SOP Planned End Date</th>
-                  </>
-                )}
+                {columns.map(column => (
+                  selectedColumns.includes(column) && <th key={column}>{column}</th>
+                ))}
+                {selectedColumns.includes('Project PIF')}
+                {selectedColumns.includes('Project Name')}
+                {selectedColumns.includes('Tool Name')}
+                {selectedColumns.includes('Tool Serial Name')}
+                {selectedColumns.includes('Emp Code')}
+                {selectedColumns.includes('Human Resources')}
+                {selectedColumns.includes('Customer')}  
+                {selectedColumns.includes('Phase')}
+                {selectedColumns.includes('Software SOP Actual Date')}
+                {selectedColumns.includes('Software SOP Planned Date')}
+                {selectedColumns.includes('D & D Efforts Actual (PHs)')}
+                {selectedColumns.includes('D & D Efforts Planned (PHs)')}
+                {selectedColumns.includes('D & D Amount Actual (in thousands)')}
+                {selectedColumns.includes('D & D Amount Planned (in thousands)')}
+                {selectedColumns.includes('SOP Actual End Date')}
+                {selectedColumns.includes('SOP Planned End Date')}
               </tr>
             </thead>
             <tbody>
-              {filteredProjects.map((project) => (
+              {projects.map((project) => (
                 <tr key={project['sno']}>
                   <td>
                     <input
@@ -503,26 +714,22 @@ const Projects = () => {
                       onChange={(event) => handleCheckboxChange(event, project['sno'])}
                     />
                   </td>
-                  <td>{project.projectName}</td>
-                  <td>{project.projectPIF}</td>
-                  <td>{project.toolName}</td>
-                  <td>{project.toolSerialName}</td>
-                  <td>{project.empCode}</td>
-                  <td>{project.humanResources}</td>
-                  <td>{project.customer}</td>
-                  <td>{project.phase}</td>
-                  {showExtendedFields && (
-                    <>
-                      <td>{project.softwareSOPActualDate}</td>
-                      <td>{project.softwareSOPPlannedDate}</td>
-                      <td>{project.ddeffortsActual}</td>
-                      <td>{project.ddeffortsPlanned}</td>
-                      <td>{project.ddAmountActual}</td>
-                      <td>{project.ddAmountPlanned}</td>
-                      <td>{project.sopActualEndDate}</td>
-                      <td>{project.sopPlannedEndDate}</td>
-                    </>
-                  )}
+                  {selectedColumns.includes('Project PIF') && <td>{highlightText(project.projectPIF, searchTerm)}</td>}
+                  {selectedColumns.includes('Project Name') && <td>{highlightText(project.projectName, searchTerm)}</td>}
+                  {selectedColumns.includes('Tool Name') && <td>{highlightText(project.toolName, searchTerm)}</td>}
+                  {selectedColumns.includes('Tool Serial Name') && <td>{highlightText(project.toolSerialName, searchTerm)}</td>}
+                  {selectedColumns.includes('Emp Code') && <td>{highlightText(project.empCode, searchTerm)}</td>}
+                  {selectedColumns.includes('Human Resources') && <td>{highlightText(project.humanResources, searchTerm)}</td>}
+                  {selectedColumns.includes('Customer') && <td>{highlightText(project.customer, searchTerm)}</td>}
+                  {selectedColumns.includes('Phase') && <td>{highlightText(project.phase, searchTerm)}</td>}
+                  {selectedColumns.includes('Software SOP Actual Date') && <td>{highlightText(project.softwareSOPActualDate, searchTerm)}</td>}
+                  {selectedColumns.includes('Software SOP Planned Date') && <td>{highlightText(project.softwareSOPPlannedDate, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Efforts Actual (PHs)') && <td>{highlightText(project.ddeffortsActual, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Efforts Planned (PHs)') && <td>{highlightText(project.ddeffortsPlanned, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Amount Actual (in thousands)') && <td>{highlightText(project.ddAmountActual, searchTerm)}</td>}
+                  {selectedColumns.includes('D & D Amount Planned (in thousands)') && <td>{highlightText(project.ddAmountPlanned, searchTerm)}</td>}
+                  {selectedColumns.includes('SOP Actual End Date') && <td>{highlightText(project.sopActualEndDate, searchTerm)}</td>}
+                  {selectedColumns.includes('SOP Planned End Date') && <td>{highlightText(project.sopPlannedEndDate, searchTerm)}</td>}
                 </tr>
               ))}
             </tbody>

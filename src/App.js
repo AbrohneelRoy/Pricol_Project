@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Projects from './Projects';
-import Report from './Report';
 import Register from './Register'; 
 import Employee from './Employee';
 import Tool from './Tool';
@@ -17,9 +16,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/register" element={<Register />} /> 
-        <Route path="/report" element={<Report />} />
         <Route path="/employee" element={<Employee />} />
-        <Route path="tool" element={<Tool />} />
+        <Route path="/tool" element={<Tool />} />
       </Routes>
     </Router>
   );
