@@ -4,6 +4,8 @@ import styles from './Projects.module.css';
 import logoImage from './image.png';
 import {useNavigate} from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 
@@ -22,7 +24,7 @@ const Employee = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showExtendedFields, setShowExtendedFields] = useState(); // Initially show extended fields
+  const [showExtendedFields, setShowExtendedFields] = useState(); 
   const [selectedColumns, setSelectedColumns] = useState([
     'Emp Code', 'Human Resources','Project PIF', 'Project Name', 'Tool Name', 'Tool Serial Name',
      'Customer', 'Phase', 'Software SOP Actual Date',
@@ -65,6 +67,18 @@ const Employee = () => {
     }
   };
 
+  const handleCancelButtonClick = () => {
+    setShowAddForm(false);
+    window.location.reload();
+  };
+
+  const handleAddButtonClick = () => {
+    // Scroll to the top left
+    window.scrollTo({ top: 0, left: 0 });
+  
+    // Toggle the add form visibility
+    setShowAddForm(!showAddForm);
+  };
 
 
   const handleLogout = () => {
@@ -110,7 +124,7 @@ const Employee = () => {
         sopActualEndDate: '',
         sopPlannedEndDate: ''
       });
-      fetchProjects(); // Reload projects after adding
+      fetchProjects(); 
     } catch (error) {
       if (error.response && error.response.status === 400) {
         window.alert('Project with the same name already exists.');
@@ -154,7 +168,6 @@ const Employee = () => {
         );
       }
   
-      // Reload projects after deletion or truncation
       setProjects([]);
       setSelectedProjects([]);
       setSelectAll(false);
@@ -172,6 +185,7 @@ const Employee = () => {
 
     try {
       const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
+      window.scrollTo({ top: 0, left: 0});
       setNewProject(response.data);
       setShowAddForm(true);
     } catch (error) {
@@ -203,10 +217,8 @@ const Employee = () => {
       return;
     }
   
-    // Filter the selected projects
     const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
   
-    // Map the data to the desired format, including only selected columns
     const dataToExport = selectedData.map(project => {
       const filteredProject = {};
       selectedColumns.forEach(column => {
@@ -266,35 +278,124 @@ const Employee = () => {
       return filteredProject;
     });
   
-    // Create a new workbook and add the data to a sheet
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
   
-    // Apply header styles
     const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
     for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
       const cell_address = XLSX.utils.encode_cell({ c: C, r: 0 });
       if (!worksheet[cell_address]) continue;
       worksheet[cell_address].s = {
         font: { bold: true },
-        fill: { fgColor: { rgb: "D3D3D3" } } // Light grey background
+        fill: { fgColor: { rgb: "D3D3D3" } } 
       };
     }
   
-    // Set column widths dynamically based on the selected columns
     const colWidths = selectedColumns.map(() => ({ wch: 20 }));
     worksheet['!cols'] = colWidths;
   
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects');
   
-    // Generate the Excel file and trigger the download
     XLSX.writeFile(workbook, 'Employees.xlsx');
   };
   
 
   const handleGeneratePDF = () => {
-    // Implement logic to generate PDF file
-    console.log('Generating PDF...');
+    if (selectedProjects.length === 0) {
+      alert('Please select at least one project to generate the PDF file.');
+      return;
+    }
+  
+    if (selectedColumns.length === 0) {
+      alert('Please select at least one column to generate the PDF file.');
+      return;
+    }
+  
+    const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
+  
+    const dataToExport = selectedData.map(project => {
+      const filteredProject = [];
+      selectedColumns.forEach(column => {
+        switch (column) {
+          case 'Emp Code':
+            filteredProject.push(project.empCode);
+            break;
+          case 'Human Resources':
+            filteredProject.push(project.humanResources);
+            break;
+          case 'Project PIF':
+            filteredProject.push(project.projectPIF);
+            break;
+          case 'Project Name':
+            filteredProject.push(project.projectName);
+            break;
+          case 'Tool Name':
+            filteredProject.push(project.toolName);
+            break;
+          case 'Tool Serial Name':
+            filteredProject.push(project.toolSerialName);
+            break;
+          case 'Customer':
+            filteredProject.push(project.customer);
+            break;
+          case 'Phase':
+            filteredProject.push(project.phase);
+            break;
+          case 'Software SOP Actual Date':
+            filteredProject.push(project.softwareSOPActualDate);
+            break;
+          case 'Software SOP Planned Date':
+            filteredProject.push(project.softwareSOPPlannedDate);
+            break;
+          case 'D & D Efforts Actual (PHs)':
+            filteredProject.push(project.ddeffortsActual);
+            break;
+          case 'D & D Efforts Planned (PHs)':
+            filteredProject.push(project.ddeffortsPlanned);
+            break;
+          case 'D & D Amount Actual (in thousands)':
+            filteredProject.push(project.ddAmountActual);
+            break;
+          case 'D & D Amount Planned (in thousands)':
+            filteredProject.push(project.ddAmountPlanned);
+            break;
+          case 'SOP Actual End Date':
+            filteredProject.push(project.sopActualEndDate);
+            break;
+          case 'SOP Planned End Date':
+            filteredProject.push(project.sopPlannedEndDate);
+            break;
+          default:
+            break;
+        }
+      });
+      return filteredProject;
+    });
+  
+    const doc = new jsPDF('landscape');
+  
+    doc.text('Projects Report', 14, 10);
+  
+    doc.autoTable({
+      head: [selectedColumns],
+      body: dataToExport,
+      startY: 20,
+      theme: 'striped',
+      styles: {
+        fontSize: 8,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [211, 211, 211], 
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
+      },
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+      },
+    });
+  
+    doc.save('Projects.pdf');
   };
 
   const filteredProjects = projects.filter((project) =>
@@ -329,7 +430,7 @@ const Employee = () => {
     if (containerRef.current && searchTerm) {
       const highlightedElement = containerRef.current.querySelector(`.${styles.highlight}`);
       if (highlightedElement) {
-        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        highlightedElement.scrollIntoView({ block: 'center' });
       }
     }
   }, [searchTerm]);
@@ -378,59 +479,59 @@ const Employee = () => {
         </div>
       )}
       <div className={styles['projects-mainContent']}>
-      <div className={styles['nav-wrapper']}>
-      <ul className={styles['nav-navList']}>
-        <li>
-          <button className={styles['nav-navButton']} onClick={() => navigate('/dashboard')}>
-            Back to Home
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={() => setShowAddForm(!showAddForm)}>
-            Add
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleModifyProject} disabled={selectedProjects.length !== 1}>
-            Modify
-          </button>
-        </li>
-        <li>
-          {username === 'Admin' &&
-            <button className={styles['nav-navButton']} onClick={handleDeleteProjects} disabled={selectedProjects.length === 0}>
-            Delete
-          </button>
-            }
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleToggleExtendedFields}>
-            {showExtendedFields ? 'Hide Details' : 'Show Details'}
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleGenerateExcel}>
-            Generate Excel
-          </button>
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleGeneratePDF}>
-            Generate Pdf
-          </button>
-        </li>
-        <li>
-            { username === 'Admin' &&
-          <button className={styles['nav-navButton']} onClick={() => navigate('/register')}>
-            Register
-          </button>
-            }
-        </li>
-        <li>
-          <button className={styles['nav-navButton']} onClick={handleLogout}>
-            Log Out
-          </button>
-        </li>
-      </ul>
-    </div>
+        <div className={styles['nav-wrapper']}>
+          <ul className={styles['nav-navList']}>
+            <li>
+              <button className={styles['nav-navButton']} onClick={() => navigate('/dashboard')}>
+                Back to Home
+              </button>
+            </li>
+            <li>
+              <button className={styles['nav-navButton']} onClick={handleAddButtonClick}>
+                Add
+              </button>
+            </li>
+            <li>
+              <button className={styles['nav-navButton']} onClick={handleModifyProject} disabled={selectedProjects.length !== 1}>
+                Modify
+              </button>
+            </li>
+            <li>
+              {username === 'Admin' &&
+                <button className={styles['nav-navButton']} onClick={handleDeleteProjects} disabled={selectedProjects.length === 0}>
+                Delete
+              </button>
+                }
+            </li>
+            <li>
+              <button className={styles['nav-navButton']} onClick={handleToggleExtendedFields}>
+                {showExtendedFields ? 'Hide Details' : 'Show Details'}
+              </button>
+            </li>
+            <li>
+              <button className={styles['nav-navButton']} onClick={handleGenerateExcel}>
+                Generate Excel
+              </button>
+            </li>
+            <li>
+              <button className={styles['nav-navButton']} onClick={handleGeneratePDF}>
+                Generate Pdf
+              </button>
+            </li>
+            <li>
+                { username === 'Admin' &&
+              <button className={styles['nav-navButton']} onClick={() => navigate('/register')}>
+                Register
+              </button>
+                }
+            </li>
+            <li>
+              <button className={styles['nav-navButton']} onClick={handleLogout}>
+                Log Out
+              </button>
+            </li>
+          </ul>
+        </div>
         
         <div className={styles['projects-content']} ref={containerRef}>
         <div className={styles['projects-controls']}>
@@ -579,7 +680,7 @@ const Employee = () => {
               <button className={styles['projects-button']} onClick={handleAddProject}>
                 {newProject['sno'] ? 'Modify Data' : 'Add New Data'}
               </button>
-              <button className={styles['projects-button']} onClick={() => setShowAddForm(false)}>
+              <button className={styles['projects-button']}  onClick={handleCancelButtonClick}>
                 Cancel
               </button>
             </div>

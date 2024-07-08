@@ -90,8 +90,9 @@
 }
 
 .loginImage {
-  max-width: 100%;
+  width: 500px;
   height: auto;
   max-height: 250px;
   border-radius: 10px;
+  margin-left: 80px;
 }

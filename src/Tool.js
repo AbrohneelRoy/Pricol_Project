@@ -4,6 +4,8 @@ import styles from './Projects.module.css';
 import logoImage from './image.png';
 import {useNavigate} from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 
@@ -112,6 +114,7 @@ const Tool = () => {
         sopPlannedEndDate: ''
       });
       fetchProjects(); // Reload projects after adding
+      window.location.reload();
     } catch (error) {
       if (error.response && error.response.status === 400) {
         window.alert('Project with the same name already exists.');
@@ -130,7 +133,18 @@ const Tool = () => {
     }
   };
 
+  const handleCancelButtonClick = () => {
+    setShowAddForm(false);
+    window.location.reload();
+  };
 
+  const handleAddButtonClick = () => {
+    // Scroll to the top left
+    window.scrollTo({ top: 0, left: 0 });
+  
+    // Toggle the add form visibility
+    setShowAddForm(!showAddForm);
+  };
 
   const handleSelectAll = (event) => {
     setSelectAll(event.target.checked);
@@ -174,6 +188,7 @@ const Tool = () => {
 
     try {
       const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
+      window.scrollTo({ top: 0, left: 0});
       setNewProject(response.data);
       setShowAddForm(true);
     } catch (error) {
@@ -293,8 +308,107 @@ const Tool = () => {
   };
 
   const handleGeneratePDF = () => {
-    // Implement logic to generate PDF file
-    console.log('Generating PDF...');
+    if (selectedProjects.length === 0) {
+      alert('Please select at least one project to generate the PDF file.');
+      return;
+    }
+  
+    if (selectedColumns.length === 0) {
+      alert('Please select at least one column to generate the PDF file.');
+      return;
+    }
+  
+    // Filter the selected projects
+    const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
+  
+    // Map the data to the desired format, including only selected columns
+    const dataToExport = selectedData.map(project => {
+      const filteredProject = [];
+      selectedColumns.forEach(column => {
+        switch (column) {
+          case 'Emp Code':
+            filteredProject.push(project.empCode);
+            break;
+          case 'Human Resources':
+            filteredProject.push(project.humanResources);
+            break;
+          case 'Project PIF':
+            filteredProject.push(project.projectPIF);
+            break;
+          case 'Project Name':
+            filteredProject.push(project.projectName);
+            break;
+          case 'Tool Name':
+            filteredProject.push(project.toolName);
+            break;
+          case 'Tool Serial Name':
+            filteredProject.push(project.toolSerialName);
+            break;
+          case 'Customer':
+            filteredProject.push(project.customer);
+            break;
+          case 'Phase':
+            filteredProject.push(project.phase);
+            break;
+          case 'Software SOP Actual Date':
+            filteredProject.push(project.softwareSOPActualDate);
+            break;
+          case 'Software SOP Planned Date':
+            filteredProject.push(project.softwareSOPPlannedDate);
+            break;
+          case 'D & D Efforts Actual (PHs)':
+            filteredProject.push(project.ddeffortsActual);
+            break;
+          case 'D & D Efforts Planned (PHs)':
+            filteredProject.push(project.ddeffortsPlanned);
+            break;
+          case 'D & D Amount Actual (in thousands)':
+            filteredProject.push(project.ddAmountActual);
+            break;
+          case 'D & D Amount Planned (in thousands)':
+            filteredProject.push(project.ddAmountPlanned);
+            break;
+          case 'SOP Actual End Date':
+            filteredProject.push(project.sopActualEndDate);
+            break;
+          case 'SOP Planned End Date':
+            filteredProject.push(project.sopPlannedEndDate);
+            break;
+          default:
+            break;
+        }
+      });
+      return filteredProject;
+    });
+  
+    const doc = new jsPDF('landscape');
+  
+    // Add a title to the PDF
+    doc.text('Projects Report', 14, 10);
+  
+    // Add table to PDF
+    doc.autoTable({
+      head: [selectedColumns],
+      body: dataToExport,
+      startY: 20,
+      theme: 'striped',
+      styles: {
+        fontSize: 8,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [211, 211, 211], // Light grey background for headers
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
+      },
+      columnStyles: {
+        // Adjust column widths
+        0: { cellWidth: 'auto' },
+      },
+    });
+  
+    // Save the PDF
+    doc.save('Tools.pdf');
   };
 
   const filteredProjects = projects.filter((project) =>
@@ -329,7 +443,7 @@ const Tool = () => {
     if (containerRef.current && searchTerm) {
       const highlightedElement = containerRef.current.querySelector(`.${styles.highlight}`);
       if (highlightedElement) {
-        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        highlightedElement.scrollIntoView({ block: 'center' });
       }
     }
   }, [searchTerm]);
@@ -386,7 +500,7 @@ const Tool = () => {
             </button>
           </li>
           <li>
-            <button className={styles['nav-navButton']} onClick={() => setShowAddForm(!showAddForm)}>
+            <button className={styles['nav-navButton']} onClick={handleAddButtonClick}>
               Add
             </button>
           </li>
@@ -579,7 +693,7 @@ const Tool = () => {
               <button className={styles['projects-button']} onClick={handleAddProject}>
                 {newProject['sno'] ? 'Modify Data' : 'Add New Data'}
               </button>
-              <button className={styles['projects-button']} onClick={() => setShowAddForm(false)}>
+              <button className={styles['projects-button']}  onClick={handleCancelButtonClick}>
                 Cancel
               </button>
             </div>

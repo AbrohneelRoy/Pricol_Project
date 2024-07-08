@@ -6,8 +6,13 @@ import {useNavigate} from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import Select from 'react-select';
 
 const Projects = () => {
+
+  const [filteredProjectsData, setFilteredProjectsData] = useState([]);
+
+
   const columns = [
     'Project PIF', 'Project Name', 'Emp Code', 'Human Resources','Tool Name', 'Tool Serial Name',
      'Customer', 'Phase','Software SOP Actual Date',
@@ -51,13 +56,29 @@ const Projects = () => {
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
+  const [phaseOptions, setPhaseOptions] = useState([]);
+  const [pnameOptions, setPnameOptions] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({
+    'Project PIF': [],
+    'ProjectName': [],
+    'Emp Code': [],
+    'Human Resources': [],
+    'Tool Name': [],
+    'Tool Serial Name': [],
+    'Customer': [],
+    'Phase': []
+  });
 
   
+ 
 
+  
+  
+  const handleCancelButtonClick = () => {
+    setShowAddForm(false);
+    window.location.reload();
+  };
+  
   const fetchProjects = async () => {
     try {
       const response = await axios.get('http://192.168.202.228:8080/projects');
@@ -66,6 +87,9 @@ const Projects = () => {
       console.error('Error fetching projects:', error);
     }
   };
+  useEffect(() => {
+    fetchProjects();
+  }, []);
   const handleLogout = () => {
     localStorage.removeItem('username');
     navigate('/login', { replace: true });
@@ -110,6 +134,7 @@ const Projects = () => {
   };
 
   const handleAddProject = async () => {
+
     const isEmpty = Object.values(newProject).every(x => x === '');
     if (isEmpty) {
       window.alert('At least one field is required.');
@@ -120,6 +145,7 @@ const Projects = () => {
       const response = await axios.post('http://192.168.202.228:8080/projects', newProject);
       setProjects([...projects, response.data.project]);
       setShowAddForm(false);
+      
       setNewProject({
         projectPIF: '',
         projectName: '',
@@ -186,6 +212,7 @@ const Projects = () => {
   
     try {
       const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
+      window.scrollTo({ top: 0, left: 0});
       setNewProject(response.data);
       setShowAddForm(true); 
     } catch (error) {
@@ -422,7 +449,7 @@ const Projects = () => {
     if (containerRef.current && searchTerm) {
       const highlightedElement = containerRef.current.querySelector(`.${styles.highlight}`);
       if (highlightedElement) {
-        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        highlightedElement.scrollIntoView({ block: 'center' });
       }
     }
   }, [searchTerm]);
@@ -443,7 +470,79 @@ const Projects = () => {
     scrollToHighlightedText();
   }, [searchTerm, scrollToHighlightedText]);
   
+  const handleAddButtonClick = () => {
+    // Scroll to the top left
+    window.scrollTo({ top: 0, left: 0});
   
+    // Toggle the add form visibility
+    setShowAddForm(!showAddForm);
+  };
+
+
+  const fetchPhaseOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-phase');
+      const options = response.data.map(phase => ({ value: phase, label: phase }));
+      setPhaseOptions(options);
+    } catch (error) {
+      console.error('Error fetching phase options:', error);
+    }
+  };
+  const fetchPnameOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pname');
+      const options = response.data.map(projectName => ({ value: projectName, label: projectName }));
+      setPnameOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+
+    // Handle filter change for Phase and ProjectName
+    const handleFilterChange = (columnName, selectedOptions) => {
+      setSelectedFilters(prevFilters => ({
+        ...prevFilters,
+        [columnName]: selectedOptions ? selectedOptions.map(option => option.value.toLowerCase()) : []
+      }));
+    };
+  
+    // Apply filters based on selected Phase and ProjectName
+    const applyFilters = () => {
+      let filteredData = [...projects]; // Assuming projects is your initial data source
+    
+      // Filter by Phase
+      const phaseFilterValues = selectedFilters['Phase'];
+      if (phaseFilterValues && phaseFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['phase']; // Get the value of the "Phase" column
+          return projectValue && phaseFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+  
+      // Filter by ProjectName
+      const pnameFilterValues = selectedFilters['ProjectName'];
+      if (pnameFilterValues && pnameFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['projectName']; // Get the value of the "ProjectName" column
+          return projectValue && pnameFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+  
+      // Update state with filtered data
+      setFilteredProjectsData(filteredData);
+    };
+  
+    useEffect(() => {
+      fetchPhaseOptions();
+      fetchPnameOptions();
+      // Fetch other options if needed
+    }, []);
+  
+    useEffect(() => {
+      // Apply filters whenever selectedFilters change
+      applyFilters();
+    });
+
   
   return (
     <div className={styles['projects-container']}>
@@ -480,7 +579,7 @@ const Projects = () => {
           </button>
         </li>
         <li>
-          <button className={styles['nav-navButton']} onClick={() => setShowAddForm(!showAddForm)}>
+          <button className={styles['nav-navButton']} onClick={handleAddButtonClick}>
             Add
           </button>
         </li>
@@ -537,6 +636,25 @@ const Projects = () => {
             <button onClick={handleSearchButtonClick} className={styles['projects-search-button']}>
               Search
             </button>
+            
+            <div className={styles['multi-select-container']}>
+              <div key="ProjectName" className={styles['multi-select-dropdown']}>
+                <label>Project Name</label>
+                <Select
+                  isMulti
+                  options={pnameOptions}
+                  onChange={selectedOptions => handleFilterChange('ProjectName', selectedOptions)}
+                />
+              </div>
+              <div key="Phase" className={styles['multi-select-dropdown']}>
+                <label>Phase</label>
+                <Select
+                  isMulti
+                  options={phaseOptions}
+                  onChange={selectedOptions => handleFilterChange('Phase', selectedOptions)}
+                />
+              </div>
+            </div>
           </div>
           {showAddForm && (
             <div className={styles['projects-form']}>
@@ -672,7 +790,7 @@ const Projects = () => {
               <button className={styles['projects-button']} onClick={handleAddProject}>
                 {newProject['sno'] ? 'Modify Data' : 'Add New Data'}
               </button>
-              <button className={styles['projects-button']} onClick={() => setShowAddForm(false)}>
+              <button className={styles['projects-button']}  onClick={handleCancelButtonClick}>
                 Cancel
               </button>
             </div>
@@ -705,7 +823,7 @@ const Projects = () => {
               </tr>
             </thead>
             <tbody>
-              {projects.map((project) => (
+              {filteredProjectsData.map((project) => (
                 <tr key={project['sno']}>
                   <td>
                     <input
@@ -734,6 +852,7 @@ const Projects = () => {
               ))}
             </tbody>
           </table>
+
         </div>
       </div>
     </div>
