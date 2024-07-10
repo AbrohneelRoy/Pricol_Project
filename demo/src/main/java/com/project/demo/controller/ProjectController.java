@@ -70,20 +70,91 @@ public class ProjectController {
         }
     }
 
+    @DeleteMapping("/truncate")
+    public ResponseEntity<Void> truncateProjects() {
+        projectService.truncateProjects();
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/count")
     public ResponseEntity<Map<String, Long>> countDistinctFields() {
         try {
             long projectCount = projectService.countDistinctProjectNames();
             long toolCount = projectService.countDistinctToolNames();
             long empCount = projectService.countDistinctEmpCodes();
+            long phase1 = projectService.countphase1();
+            long phase2 = projectService.countphase2();
+            long phase3 = projectService.countphase3();
+            long phase4 = projectService.countphase4();
+            long phase5 = projectService.countphase5();
+            long phase6 = projectService.countphase6();
+            long phase7 = projectService.countphase7();
 
             return ResponseEntity.ok(Map.of(
                     "projectCount", projectCount,
                     "toolCount", toolCount,
-                    "empCount", empCount
+                    "empCount", empCount,
+                    "phase1", phase1,
+                    "phase2", phase2,
+                    "phase3", phase3, 
+                    "phase4", phase4,
+                    "phase5", phase5,
+                    "phase6", phase6,
+                    "phase7", phase7
+
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-}
+
+    @GetMapping("/distinct-phase")
+    public ResponseEntity<List<String>> getDistinctColumns() {
+        List<String> distinctColumns = projectService.findDistinctColumns();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-pname")
+    public ResponseEntity<List<String>> getDistinctPnames() {
+        List<String> distinctColumns = projectService.findDistinctPnames();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-pif")
+    public ResponseEntity<List<String>> getDistinctPif() {
+        List<String> distinctColumns = projectService.findDistinctPif();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-tname")
+    public ResponseEntity<List<String>> getDistinctTname() {
+        List<String> distinctColumns = projectService.findDistinctTname();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-tsname")
+    public ResponseEntity<List<String>> getDistinctTSname() {
+        List<String> distinctColumns = projectService.findDistinctTSname();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-ecode")
+    public ResponseEntity<List<String>> getDistinctEcode() {
+        List<String> distinctColumns = projectService.findDistinctEcode();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-hr")  
+    public ResponseEntity<List<String>> getDistinctHr() {
+        List<String> distinctColumns = projectService.findDistinctHr();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+    @GetMapping("/distinct-cus")
+    public ResponseEntity<List<String>> getDistinctCus() {
+        List<String> distinctColumns = projectService.findDistinctCus();
+        return ResponseEntity.ok().body(distinctColumns);
+    }
+
+} 
+    

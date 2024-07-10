@@ -15,6 +15,7 @@ public class Project {
     private String empCode;
     private String humanResources;
     private String customer;
+    private String phase;
     private String softwareSOPActualDate;
     private String softwareSOPPlannedDate;
     private String ddeffortsActual;
@@ -23,6 +24,14 @@ public class Project {
     private String ddAmountPlanned;
     private String sopActualEndDate;
     private String sopPlannedEndDate;
+
+    public void setPhase(String phase){
+        this.phase = phase;
+    }
+
+    public String getPhase(){
+        return phase;
+    }
 
     public Integer getSno() {
         return sno;
@@ -160,7 +169,7 @@ public class Project {
     public Project(String projectName, String projectPIF, String toolName, String toolSerialName, String empCode,
             String humanResources, String customer, String softwareSOPActualDate, String softwareSOPPlannedDate,
             String ddeffortsActual, String ddeffortsPlanned, String ddAmountActual, String ddAmountPlanned,
-            String sopActualEndDate, String sopPlannedEndDate) {
+            String sopActualEndDate, String sopPlannedEndDate, String phase) {
         this.projectName = projectName;
         this.projectPIF = projectPIF;
         this.toolName = toolName;
@@ -176,6 +185,7 @@ public class Project {
         this.ddAmountPlanned = ddAmountPlanned;
         this.sopActualEndDate = sopActualEndDate;
         this.sopPlannedEndDate = sopPlannedEndDate;
+        this.phase = phase;
     }
 
     // toString(), equals(), hashCode() methods if needed

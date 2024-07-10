@@ -16,17 +16,28 @@ public class Login {
     private String username;
     private String email;
     private String password;
+    private String role;
 
     // Constructors
     public Login() {}
 
-    public Login(String username, String email, String password) {
+    public Login(String username, String email, String password, String role) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     // Getters and Setters
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }

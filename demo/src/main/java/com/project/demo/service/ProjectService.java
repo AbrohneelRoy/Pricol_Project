@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -75,5 +76,70 @@ public class ProjectService {
 
     public long countDistinctEmpCodes() {
         return projectRepository.countDistinctEmpCodes();
+    }
+
+    public long countphase1() {
+        return projectRepository.countphase1();
+    }
+
+    public long countphase2() {
+        return projectRepository.countphase2();
+    }
+
+    public long countphase3() {
+        return projectRepository.countphase3();
+    }
+
+    public long countphase4() {
+        return projectRepository.countphase4();
+    }
+
+    public long countphase5() {
+        return projectRepository.countphase5();
+    }
+
+    public long countphase6() {
+        return projectRepository.countphase6();
+    }
+
+    public long countphase7() {
+        return projectRepository.countphase7();
+    }
+
+    @Transactional
+    public void truncateProjects() {
+        projectRepository.truncateTable();
+    }
+
+    public List<String> findDistinctColumns() {
+        return projectRepository.findDistinctColumns(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctPnames() {
+        return projectRepository.findDistinctPnames(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctPif() {
+        return projectRepository.findDistinctPif(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctTname() {
+        return projectRepository.findDistinctTname(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctTSname() {
+        return projectRepository.findDistinctTSname(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctEcode() {
+        return projectRepository.findDistinctEcode(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctHr() {
+        return projectRepository.findDistinctHr(); // Implement this in your repository
+    }
+
+    public List<String> findDistinctCus() {
+        return projectRepository.findDistinctCus(); // Implement this in your repository
     }
 }
