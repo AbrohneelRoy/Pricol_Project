@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css'; 
-import loginImage from './image.png';
+import loginImage from './actual.png';
 
 const Login = () => {
   const [username, setUsername] = useState('');

@@ -158,3 +158,50 @@
   background-color: #137cec;
   color: #f2f2f2;
 }
+
+
+.register-radioGroup {
+  flex-direction: row; /* Arrange options horizontally */
+  justify-content: space-between; /* Distribute options evenly */
+  width: 300px; /* Adjust width as needed */
+  margin: auto; /* Center align horizontally */
+}
+
+.register-radioGroup label {
+  display: flex;
+  align-items: center; /* Center align vertically */
+}
+
+.register-radioGroup label:first-child {
+  justify-content: flex-start; /* Align admin option to the left */
+}
+
+.register-radioGroup {
+  flex-direction: row; /* Arrange options horizontally */
+  justify-content: space-between; /* Distribute options evenly */
+  width: 300px; /* Adjust width as needed */
+  margin: auto; /* Center align horizontally */
+}
+
+.register-radioGroup label {
+  display: flex;
+  align-items: center; /* Center align vertically */
+}
+
+.register-radioGroup label:first-child {
+  justify-content: flex-start; /* Align admin option to the left */
+}
+
+.register-radioGroup label:last-child {
+  margin-left: 90px;
+  margin-top: -29px;
+}
+
+.register-radioGroup input[type="radio"] {
+  margin-right: 5px; /* Adjust spacing between radio button and label */
+}
+
+
+.register-radioGroup input[type="radio"] {
+  margin-right: 5px; /* Adjust spacing between radio button and label */
+}

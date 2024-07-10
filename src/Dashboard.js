@@ -9,7 +9,8 @@ import logoImage from './image.png';
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
-  const username = localStorage.getItem('username');
+  const [username, setUsername] = useState('');
+  const [role, setRole] = useState('');
   const [projectsCount, setProjectsCount] = useState(0);
   const [employeesCount, setEmployeesCount] = useState(0);
   const [toolsCount, setToolsCount] = useState(0);
@@ -23,9 +24,28 @@ const Dashboard = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchCounts();
-  }, []);
+
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/login');
+      const loggedInUser = localStorage.getItem('username');
+  
+      // Find the user object that matches the logged-in username
+      const currentUser = response.data.find(user => user.username === loggedInUser);
+  
+      if (currentUser) {
+        setUsername(currentUser.username);
+        setRole(currentUser.role);
+      } else {
+        console.error('User not found in API response');
+        // Optionally handle case where user is not found
+      }
+  
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
 
   const fetchCounts = async () => {
     try {
@@ -44,13 +64,16 @@ const Dashboard = () => {
       console.error('Error fetching counts:', error);
     }
   };
-
+  useEffect(() => {
+    fetchUserInfo();
+    fetchCounts();
+  }, []);
   const phaseData = {
-    labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100','SOP'],
+    labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100', 'SOP'],
     datasets: [
       {
         label: 'Phase Counts',
-        data: [phase1, phase2, phase3, phase4, phase5, phase6,phase7],
+        data: [phase1, phase2, phase3, phase4, phase5, phase6, phase7],
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)', // Red
           'rgba(54, 162, 235, 0.6)', // Blue
@@ -73,7 +96,6 @@ const Dashboard = () => {
       },
     ],
   };
-  
 
   const handleViewProjects = () => {
     navigate('/projects');
@@ -89,6 +111,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('username');
+    localStorage.removeItem('role');
     navigate('/login', { replace: true });
   };
 
@@ -110,7 +133,7 @@ const Dashboard = () => {
           <div className={`${styles.dashuserInfo} ${dropdownOpen ? styles.dropdownOpen : ''}`} onClick={toggleDropdown}>
             {username}
             <div className={styles.dropdownContent}>
-              {username === 'Admin' && <button onClick={handleRegister}>Register</button>}
+              {role === 'admin' && <button onClick={handleRegister}>Register</button>}
               <button onClick={handleLogout}>Logout</button>
             </div>
           </div>

@@ -7,6 +7,7 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('username');
@@ -24,8 +25,6 @@ const Register = () => {
     navigate('/login', { replace: true });
   };
 
-
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -35,14 +34,13 @@ const Register = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, role }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         alert(data.message);
-        navigate('/login');
       } else {
         alert(data.message);
       }
@@ -108,6 +106,34 @@ const Register = () => {
                   className={styles['register-input']}
                   required
                 />
+              </div>
+              <div className={styles['register-formGroup']}>
+                <label>Role:</label>
+                <div className={styles['register-radioGroup']}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="admin"
+                      checked={role === 'admin'}
+                      onChange={(e) => setRole(e.target.value)}
+                      required
+                    />
+                    Admin
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="user"
+                      checked={role === 'user'}
+                      onChange={(e) => setRole(e.target.value)}
+                      required
+                    />
+                    User
+                  </label>
+                </div>
+
               </div>
               <button type="submit" className={styles['register-button']}>Register</button>
             </form>

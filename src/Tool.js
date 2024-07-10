@@ -6,6 +6,8 @@ import {useNavigate} from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import Select from 'react-select';
+
 
 
 
@@ -32,7 +34,31 @@ const Tool = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showExtendedFields, setShowExtendedFields] = useState(); // Initially show extended fields
+  const [showExtendedFields, setShowExtendedFields] = useState(true); // Initially show extended fields
+
+
+  const [showFilters, setShowFilters] = useState(false); // State to manage visibility
+
+  const [filteredProjectsData, setFilteredProjectsData] = useState([]);
+  const [phaseOptions, setPhaseOptions] = useState([]);
+  const [pnameOptions, setPnameOptions] = useState([]);
+  const [pifOptions, setPifOptions] = useState([]);
+  const [ecodeOptions, setEcodeOptions] = useState([]);
+  const [hrOptions, setHrOptions] = useState([]);
+  const [tnameOptions, setTnameOptions] = useState([]);
+  const [TsnameOptions, setTsnameOptions] = useState([]);
+  const [cusOptions, setCusOptions] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({
+    'Project PIF': [],
+    'ProjectName': [],
+    'Emp Code': [],
+    'Human Resources': [],
+    'Tool Name': [],
+    'Tool Serial Name': [],
+    'Customer': [],
+    'Phase': []
+  });
+
 
   const [newProject, setNewProject] = useState({
     projectPIF: '',
@@ -149,7 +175,7 @@ const Tool = () => {
   const handleSelectAll = (event) => {
     setSelectAll(event.target.checked);
     if (event.target.checked) {
-      setSelectedProjects(filteredProjects.map((project) => project['sno']));
+      setSelectedProjects(filteredProjectsData.map((project) => project['sno']));
     } else {
       setSelectedProjects([]);
     }
@@ -411,24 +437,6 @@ const Tool = () => {
     doc.save('Tools.pdf');
   };
 
-  const filteredProjects = projects.filter((project) =>
-    project.projectPIF.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.toolSerialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.empCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.humanResources.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.softwareSOPActualDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.softwareSOPPlannedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddeffortsActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddeffortsPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddAmountActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.ddAmountPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.sopActualEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.sopPlannedEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.phase.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleSearchInputChange = (event) => {
     setSearchInput(event.target.value);
@@ -463,6 +471,172 @@ const Tool = () => {
   useEffect(() => {
     scrollToHighlightedText();
   }, [searchTerm, scrollToHighlightedText]);
+
+
+  const fetchPhaseOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-phase');
+      const options = response.data.map(phase => ({ value: phase, label: phase }));
+      setPhaseOptions(options);
+    } catch (error) {
+      console.error('Error fetching phase options:', error);
+    }
+  };
+  const fetchPnameOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pname');
+      const options = response.data.map(projectName => ({ value: projectName, label: projectName }));
+      setPnameOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+  const fetchPifOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pif');
+      const options = response.data.map(projectPIF => ({ value: projectPIF, label: projectPIF }));
+      setPifOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+  const fetchTnameOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-tname');
+      const options = response.data.map(toolName => ({ value: toolName, label: toolName }));
+      setTnameOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+  const fetchTSnameOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-tsname');
+      const options = response.data.map(toolSerialName => ({ value: toolSerialName, label: toolSerialName }));
+      setTsnameOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+  const fetchEcodeOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-ecode');
+      const options = response.data.map(empCode => ({ value: empCode, label: empCode }));
+      setEcodeOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+  const fetchHrOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-hr');
+      const options = response.data.map(humanResources => ({ value: humanResources, label: humanResources }));
+      setHrOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+  const fetchCusOptions = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-cus');
+      const options = response.data.map(customer => ({ value: customer, label: customer }));
+      setCusOptions(options);
+    } catch (error) {
+      console.error('Error fetching pname options:', error);
+    }
+  };
+
+    // Handle filter change for Phase and ProjectName
+    const handleFilterChange = (columnName, selectedOptions) => {
+      setSelectedFilters(prevFilters => ({
+        ...prevFilters,
+        [columnName]: selectedOptions ? selectedOptions.map(option => option.value.toLowerCase()) : []
+      }));
+    };
+  
+    // Apply filters based on selected Phase and ProjectName
+    const applyFilters = () => {
+      let filteredData = [...projects]; // Assuming projects is your initial data source
+    
+      // Filter by Phase
+      const phaseFilterValues = selectedFilters['Phase'];
+      if (phaseFilterValues && phaseFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['phase']; // Get the value of the "Phase" column
+          return projectValue && phaseFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+  
+      // Filter by ProjectName
+      const pnameFilterValues = selectedFilters['ProjectName'];
+      if (pnameFilterValues && pnameFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['projectName']; // Get the value of the "ProjectName" column
+          return projectValue && pnameFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+      const pifFilterValues = selectedFilters['Project PIF'];
+      if (pifFilterValues && pifFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['projectPIF']; // Get the value of the "ProjectName" column
+          return projectValue && pifFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+      const tnameFilterValues = selectedFilters['Tool Name'];
+      if (tnameFilterValues && tnameFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['toolName']; // Get the value of the "ProjectName" column
+          return projectValue && tnameFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+      const tsnameFilterValues = selectedFilters['Tool Serial Name'];
+      if (tsnameFilterValues && tsnameFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['toolSerialName']; // Get the value of the "ProjectName" column
+          return projectValue && tsnameFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+      const ecodeFilterValues = selectedFilters['Emp Code'];
+      if (ecodeFilterValues && ecodeFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['empCode']; // Get the value of the "ProjectName" column
+          return projectValue && ecodeFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+      const hrFilterValues = selectedFilters['Human Resources'];
+      if (hrFilterValues && hrFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['humanResources']; // Get the value of the "ProjectName" column
+          return projectValue && hrFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+      const cusFilterValues = selectedFilters['Customer'];
+      if (cusFilterValues && cusFilterValues.length > 0) {
+        filteredData = filteredData.filter(project => {
+          const projectValue = project['customer']; // Get the value of the "ProjectName" column
+          return projectValue && cusFilterValues.includes(projectValue.toLowerCase());
+        });
+      }
+  
+      // Update state with filtered data
+      setFilteredProjectsData(filteredData);
+    };
+  
+    useEffect(() => {
+      fetchPhaseOptions();
+      fetchPnameOptions();
+      fetchPifOptions();
+      fetchTnameOptions();
+      fetchTSnameOptions();
+      fetchEcodeOptions();
+      fetchHrOptions();
+      fetchCusOptions();
+    }, []);
+  
+    useEffect(() => {
+      // Apply filters whenever selectedFilters change
+      applyFilters();
+    });
 
   return (
     <div className={styles['projects-container']}>
@@ -558,6 +732,77 @@ const Tool = () => {
             <button onClick={handleSearchButtonClick} className={styles['projects-search-button']}>
               Search
             </button>
+            <button className={styles['projects-search-button2']} onClick={() => setShowFilters(!showFilters)}>
+              Filter
+            </button>
+            {showFilters && (
+              <div className={styles['multi-select-container']}>
+                <div key="Tool Name" className={styles['multi-select-dropdown']}>
+                  <label>Tool Name</label>
+                  <Select
+                    isMulti
+                    options={tnameOptions}
+                    onChange={selectedOptions => handleFilterChange('Tool Name', selectedOptions)}
+                  />
+                </div>
+                <div key="Tool Serial Name" className={styles['multi-select-dropdown']}>
+                  <label>Tool Serial Name</label>
+                  <Select
+                    isMulti
+                    options={TsnameOptions}
+                    onChange={selectedOptions => handleFilterChange('Tool Serial Name', selectedOptions)}
+                  />
+                </div>
+                <div key="Project PIF" className={styles['multi-select-dropdown']}>
+                  <label>Project PIF</label>
+                  <Select
+                    isMulti
+                    options={pifOptions}
+                    onChange={selectedOptions => handleFilterChange('Project PIF', selectedOptions)}
+                  />
+                </div>
+                <div key="ProjectName" className={styles['multi-select-dropdown']}>
+                  <label>Project Name</label>
+                  <Select
+                    isMulti
+                    options={pnameOptions}
+                    onChange={selectedOptions => handleFilterChange('ProjectName', selectedOptions)}
+                  />
+                </div>
+                <div key="Emp Code" className={styles['multi-select-dropdown']}>
+                  <label>Emp Code</label>
+                  <Select
+                    isMulti
+                    options={ecodeOptions}
+                    onChange={selectedOptions => handleFilterChange('Emp Code', selectedOptions)}
+                  />
+                </div>
+                <div key="Human Resources" className={styles['multi-select-dropdown']}>
+                  <label>Human Resources</label>
+                  <Select
+                    isMulti
+                    options={hrOptions}
+                    onChange={selectedOptions => handleFilterChange('Human Resources', selectedOptions)}
+                  />
+                </div>
+                <div key="Customer" className={styles['multi-select-dropdown']}>
+                  <label>Customer</label>
+                  <Select
+                    isMulti
+                    options={cusOptions}
+                    onChange={selectedOptions => handleFilterChange('Customer', selectedOptions)}
+                  />
+                </div>
+                <div key="Phase" className={styles['multi-select-dropdown']}>
+                  <label>Phase</label>
+                  <Select
+                    isMulti
+                    options={phaseOptions}
+                    onChange={selectedOptions => handleFilterChange('Phase', selectedOptions)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
           {showAddForm && (
             <div className={styles['projects-form']}>
@@ -726,7 +971,7 @@ const Tool = () => {
               </tr>
             </thead>
             <tbody>
-              {projects.map((project) => (
+              {filteredProjectsData.map((project) => (
                 <tr key={project['sno']}>
                   <td>
                     <input
