@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
+import droplist from './droplist.png';
 import logoImage from './image.png';
+import { Bar } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -24,14 +25,11 @@ const Dashboard = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-
-
   const fetchUserInfo = async () => {
     try {
       const response = await axios.get('http://192.168.202.228:8080/login');
       const loggedInUser = localStorage.getItem('username');
   
-      // Find the user object that matches the logged-in username
       const currentUser = response.data.find(user => user.username === loggedInUser);
   
       if (currentUser) {
@@ -39,7 +37,6 @@ const Dashboard = () => {
         setRole(currentUser.role);
       } else {
         console.error('User not found in API response');
-        // Optionally handle case where user is not found
       }
   
     } catch (error) {
@@ -64,10 +61,12 @@ const Dashboard = () => {
       console.error('Error fetching counts:', error);
     }
   };
+
   useEffect(() => {
     fetchUserInfo();
     fetchCounts();
   }, []);
+
   const phaseData = {
     labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100', 'SOP'],
     datasets: [
@@ -92,9 +91,91 @@ const Dashboard = () => {
           'rgba(255, 159, 64, 1)',
           'rgba(50, 205, 50, 1)',
         ],
-        borderWidth: 1,
+        borderWidth: 3,
+        barThickness: 140, // Adjust the bar thickness here
+        borderSkipped: false,
+        hoverBackgroundColor: [
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)',
+          'rgba(153, 102, 255, 0.8)',
+          'rgba(255, 159, 64, 0.8)',
+          'rgba(50, 205, 50, 0.8)',
+        ],
+        hoverBorderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(50, 205, 50, 1)',
+        ],
       },
     ],
+  };
+  
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 1000,
+      easing: 'easeInOutBounce',
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: {
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold',
+          },
+        },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        bodyFont: {
+          size: 12,
+        },
+        titleFont: {
+          size: 14,
+          weight: 'bold',
+        },
+        cornerRadius: 4,
+        padding: 10,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12,
+          },
+        },
+      },
+      y: {
+        grid: {
+          color: '#ccc',
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12,
+          },
+          beginAtZero: true,
+          stepSize: 1,
+        },
+      },
+    },
   };
 
   const handleViewProjects = () => {
@@ -130,10 +211,11 @@ const Dashboard = () => {
           <div className={styles.dashlogo}>
             <img src={logoImage} alt="Logo" className={styles.dashlogoImg} />
           </div>
-          <div className={`${styles.dashuserInfo} ${dropdownOpen ? styles.dropdownOpen : ''}`} onClick={toggleDropdown}>
-            {username}
-            <div className={styles.dropdownContent}>
-              {role === 'admin' && <button onClick={handleRegister}>Register</button>}
+          <div className={styles['register-userInfo']} onClick={toggleDropdown}>
+            {username}             
+            <img src={droplist} alt="dropdown arrow" className={`${styles.arrow} ${dropdownOpen ? styles.rotate : ''}`} style={{ width: '25px', height: '25px', marginRight: '5px'}} />
+            <div className={`${styles.dropdownContent} ${dropdownOpen ? styles.dropdownOpen : ''}`}>
+              {role === 'admin' && <button onClick={handleRegister}>Register</button>}              
               <button onClick={handleLogout}>Logout</button>
             </div>
           </div>
@@ -141,8 +223,12 @@ const Dashboard = () => {
       </header>
       <div className={styles.dashboardContainer}>
         <div className={styles.mainContent}>
-          <h1 className={styles.username}>Welcome, {username}!</h1>
-          <p>Enjoy the seamless experience of our application.</p>
+        <h1 className={styles.username}>Welcome, {username}!</h1>
+        <p className={styles.welcomeText}>
+          We are thrilled to have you here. Navigate through our application seamlessly and efficiently.
+          Should you need any assistance, feel free to reach out. Have a great day!
+        </p>
+
           <div className={styles.stats}>
             <div className={styles.statItem}>
               <h2>Projects</h2>
@@ -161,7 +247,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className={styles.phaseDataChart}>
-            <Bar data={phaseData} options={{ responsive: true, maintainAspectRatio: false }} />
+            <Bar data={phaseData} options={options} />
           </div>
         </div>
       </div>
@@ -170,3 +256,10 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+
+
+
+  

@@ -29,7 +29,6 @@ const Projects = () => {
     'SOP Actual End Date', 'SOP Planned End Date'
   ]);
   const navigate = useNavigate();
-  const username = localStorage.getItem('username');
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -76,11 +75,30 @@ const Projects = () => {
     'Phase': []
   });
 
-  
- 
+  const [username, setUsername] = useState('');
+  const [role, setRole] = useState('');
 
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get('http://192.168.202.228:8080/login');
+      const loggedInUser = localStorage.getItem('username');
   
+      // Find the user object that matches the logged-in username
+      const currentUser = response.data.find(user => user.username === loggedInUser);
   
+      if (currentUser) {
+        setUsername(currentUser.username);
+        setRole(currentUser.role);
+      } else {
+        console.error('User not found in API response');
+        // Optionally handle case where user is not found
+      }
+  
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
+ 
   const handleCancelButtonClick = () => {
     setShowAddForm(false);
     window.location.reload();
@@ -96,6 +114,7 @@ const Projects = () => {
   };
   useEffect(() => {
     fetchProjects();
+    fetchUserInfo();
   }, []);
   const handleLogout = () => {
     localStorage.removeItem('username');
@@ -110,26 +129,6 @@ const Projects = () => {
       setSelectedProjects([]);
     }
   };
-  // const filteredProjects = projects.filter((project) =>
-  //   project.projectPIF.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.toolSerialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.empCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.humanResources.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.softwareSOPActualDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.softwareSOPPlannedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.ddeffortsActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.ddeffortsPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.ddAmountActual.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.ddAmountPlanned.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.sopActualEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.sopPlannedEndDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.phase.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
-  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -241,177 +240,277 @@ const Projects = () => {
   
 
   const handleGenerateExcel = () => {
+    let dataToExport;
+  
+    // Use filteredProjectsData if no projects are selected
     if (selectedProjects.length === 0) {
-      alert('Please select at least one project to generate the Excel file.');
-      return;
-    }
-  
-    if (selectedColumns.length === 0) {
-      alert('Please select at least one column to generate the Excel file.');
-      return;
-    }
-  
-    // Filter the selected projects
-    const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
-  
-    // Map the data to the desired format, including only selected columns
-    const dataToExport = selectedData.map(project => {
-      const filteredProject = {};
-      selectedColumns.forEach(column => {
-        switch (column) {
-          case 'Emp Code':
-            filteredProject['Emp Code'] = project.empCode;
-            break;
-          case 'Human Resources':
-            filteredProject['Human Resources'] = project.humanResources;
-            break;
-          case 'Project PIF':
-            filteredProject['Project PIF'] = project.projectPIF;
-            break;
-          case 'Project Name':
-            filteredProject['Project Name'] = project.projectName;
-            break;
-          case 'Tool Name':
-            filteredProject['Tool Name'] = project.toolName;
-            break;
-          case 'Tool Serial Name':
-            filteredProject['Tool Serial Name'] = project.toolSerialName;
-            break;
-          case 'Customer':
-            filteredProject['Customer'] = project.customer;
-            break;
-          case 'Phase':
-            filteredProject['Phase'] = project.phase;
-            break;
-          case 'Software SOP Actual Date':
-            filteredProject['Software SOP Actual Date'] = project.softwareSOPActualDate;
-            break;
-          case 'Software SOP Planned Date':
-            filteredProject['Software SOP Planned Date'] = project.softwareSOPPlannedDate;
-            break;
-          case 'D & D Efforts Actual (PHs)':
-            filteredProject['D & D Efforts Actual (PHs)'] = project.ddeffortsActual;
-            break;
-          case 'D & D Efforts Planned (PHs)':
-            filteredProject['D & D Efforts Planned (PHs)'] = project.ddeffortsPlanned;
-            break;
-          case 'D & D Amount Actual (in thousands)':
-            filteredProject['D & D Amount Actual (in thousands)'] = project.ddAmountActual;
-            break;
-          case 'D & D Amount Planned (in thousands)':
-            filteredProject['D & D Amount Planned (in thousands)'] = project.ddAmountPlanned;
-            break;
-          case 'SOP Actual End Date':
-            filteredProject['SOP Actual End Date'] = project.sopActualEndDate;
-            break;
-          case 'SOP Planned End Date':
-            filteredProject['SOP Planned End Date'] = project.sopPlannedEndDate;
-            break;
-          default:
-            break;
-        }
+      dataToExport = filteredProjectsData.map(project => {
+        const filteredProject = {};
+        selectedColumns.forEach(column => {
+          switch (column) {
+            case 'Emp Code':
+              filteredProject['Emp Code'] = project.empCode;
+              break;
+            case 'Human Resources':
+              filteredProject['Human Resources'] = project.humanResources;
+              break;
+            case 'Project PIF':
+              filteredProject['Project PIF'] = project.projectPIF;
+              break;
+            case 'Project Name':
+              filteredProject['Project Name'] = project.projectName;
+              break;
+            case 'Tool Name':
+              filteredProject['Tool Name'] = project.toolName;
+              break;
+            case 'Tool Serial Name':
+              filteredProject['Tool Serial Name'] = project.toolSerialName;
+              break;
+            case 'Customer':
+              filteredProject['Customer'] = project.customer;
+              break;
+            case 'Phase':
+              filteredProject['Phase'] = project.phase;
+              break;
+            case 'Software SOP Actual Date':
+              filteredProject['Software SOP Actual Date'] = project.softwareSOPActualDate;
+              break;
+            case 'Software SOP Planned Date':
+              filteredProject['Software SOP Planned Date'] = project.softwareSOPPlannedDate;
+              break;
+            case 'D & D Efforts Actual (PHs)':
+              filteredProject['D & D Efforts Actual (PHs)'] = project.ddeffortsActual;
+              break;
+            case 'D & D Efforts Planned (PHs)':
+              filteredProject['D & D Efforts Planned (PHs)'] = project.ddeffortsPlanned;
+              break;
+            case 'D & D Amount Actual (in thousands)':
+              filteredProject['D & D Amount Actual (in thousands)'] = project.ddAmountActual;
+              break;
+            case 'D & D Amount Planned (in thousands)':
+              filteredProject['D & D Amount Planned (in thousands)'] = project.ddAmountPlanned;
+              break;
+            case 'SOP Actual End Date':
+              filteredProject['SOP Actual End Date'] = project.sopActualEndDate;
+              break;
+            case 'SOP Planned End Date':
+              filteredProject['SOP Planned End Date'] = project.sopPlannedEndDate;
+              break;
+            default:
+              break;
+          }
+        });
+        return filteredProject;
       });
-      return filteredProject;
-    });
+    } else {
+      // Use selectedProjects if any projects are selected
+      const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
+      dataToExport = selectedData.map(project => {
+        const filteredProject = {};
+        selectedColumns.forEach(column => {
+          switch (column) {
+            case 'Emp Code':
+              filteredProject['Emp Code'] = project.empCode;
+              break;
+            case 'Human Resources':
+              filteredProject['Human Resources'] = project.humanResources;
+              break;
+            case 'Project PIF':
+              filteredProject['Project PIF'] = project.projectPIF;
+              break;
+            case 'Project Name':
+              filteredProject['Project Name'] = project.projectName;
+              break;
+            case 'Tool Name':
+              filteredProject['Tool Name'] = project.toolName;
+              break;
+            case 'Tool Serial Name':
+              filteredProject['Tool Serial Name'] = project.toolSerialName;
+              break;
+            case 'Customer':
+              filteredProject['Customer'] = project.customer;
+              break;
+            case 'Phase':
+              filteredProject['Phase'] = project.phase;
+              break;
+            case 'Software SOP Actual Date':
+              filteredProject['Software SOP Actual Date'] = project.softwareSOPActualDate;
+              break;
+            case 'Software SOP Planned Date':
+              filteredProject['Software SOP Planned Date'] = project.softwareSOPPlannedDate;
+              break;
+            case 'D & D Efforts Actual (PHs)':
+              filteredProject['D & D Efforts Actual (PHs)'] = project.ddeffortsActual;
+              break;
+            case 'D & D Efforts Planned (PHs)':
+              filteredProject['D & D Efforts Planned (PHs)'] = project.ddeffortsPlanned;
+              break;
+            case 'D & D Amount Actual (in thousands)':
+              filteredProject['D & D Amount Actual (in thousands)'] = project.ddAmountActual;
+              break;
+            case 'D & D Amount Planned (in thousands)':
+              filteredProject['D & D Amount Planned (in thousands)'] = project.ddAmountPlanned;
+              break;
+            case 'SOP Actual End Date':
+              filteredProject['SOP Actual End Date'] = project.sopActualEndDate;
+              break;
+            case 'SOP Planned End Date':
+              filteredProject['SOP Planned End Date'] = project.sopPlannedEndDate;
+              break;
+            default:
+              break;
+          }
+        });
+        return filteredProject;
+      });
+    }
   
-    // Create a new workbook and add the data to a sheet
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
   
-    // Apply header styles
     const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
     for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
       const cell_address = XLSX.utils.encode_cell({ c: C, r: 0 });
       if (!worksheet[cell_address]) continue;
       worksheet[cell_address].s = {
         font: { bold: true },
-        fill: { fgColor: { rgb: "D3D3D3" } } // Light grey background
+        fill: { fgColor: { rgb: "D3D3D3" } }
       };
     }
   
-    // Set column widths dynamically based on the selected columns
-    const colWidths = selectedColumns.map(() => ({ wch: 30 }));
+    const colWidths = selectedColumns.map(() => ({ wch: 20 }));
     worksheet['!cols'] = colWidths;
   
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects');
   
-    // Generate the Excel file and trigger the download
     XLSX.writeFile(workbook, 'Projects.xlsx');
   };
 
   const handleGeneratePDF = () => {
+    let dataToExport;
+  
+    // Use filteredProjectsData if no projects are selected
     if (selectedProjects.length === 0) {
-      alert('Please select at least one project to generate the PDF file.');
-      return;
-    }
-  
-    if (selectedColumns.length === 0) {
-      alert('Please select at least one column to generate the PDF file.');
-      return;
-    }
-  
-    // Filter the selected projects
-    const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
-  
-    // Map the data to the desired format, including only selected columns
-    const dataToExport = selectedData.map(project => {
-      const filteredProject = [];
-      selectedColumns.forEach(column => {
-        switch (column) {
-          case 'Emp Code':
-            filteredProject.push(project.empCode);
-            break;
-          case 'Human Resources':
-            filteredProject.push(project.humanResources);
-            break;
-          case 'Project PIF':
-            filteredProject.push(project.projectPIF);
-            break;
-          case 'Project Name':
-            filteredProject.push(project.projectName);
-            break;
-          case 'Tool Name':
-            filteredProject.push(project.toolName);
-            break;
-          case 'Tool Serial Name':
-            filteredProject.push(project.toolSerialName);
-            break;
-          case 'Customer':
-            filteredProject.push(project.customer);
-            break;
-          case 'Phase':
-            filteredProject.push(project.phase);
-            break;
-          case 'Software SOP Actual Date':
-            filteredProject.push(project.softwareSOPActualDate);
-            break;
-          case 'Software SOP Planned Date':
-            filteredProject.push(project.softwareSOPPlannedDate);
-            break;
-          case 'D & D Efforts Actual (PHs)':
-            filteredProject.push(project.ddeffortsActual);
-            break;
-          case 'D & D Efforts Planned (PHs)':
-            filteredProject.push(project.ddeffortsPlanned);
-            break;
-          case 'D & D Amount Actual (in thousands)':
-            filteredProject.push(project.ddAmountActual);
-            break;
-          case 'D & D Amount Planned (in thousands)':
-            filteredProject.push(project.ddAmountPlanned);
-            break;
-          case 'SOP Actual End Date':
-            filteredProject.push(project.sopActualEndDate);
-            break;
-          case 'SOP Planned End Date':
-            filteredProject.push(project.sopPlannedEndDate);
-            break;
-          default:
-            break;
-        }
+      dataToExport = filteredProjectsData.map(project => {
+        const filteredProject = [];
+        selectedColumns.forEach(column => {
+          switch (column) {
+            case 'Emp Code':
+              filteredProject.push(project.empCode);
+              break;
+            case 'Human Resources':
+              filteredProject.push(project.humanResources);
+              break;
+            case 'Project PIF':
+              filteredProject.push(project.projectPIF);
+              break;
+            case 'Project Name':
+              filteredProject.push(project.projectName);
+              break;
+            case 'Tool Name':
+              filteredProject.push(project.toolName);
+              break;
+            case 'Tool Serial Name':
+              filteredProject.push(project.toolSerialName);
+              break;
+            case 'Customer':
+              filteredProject.push(project.customer);
+              break;
+            case 'Phase':
+              filteredProject.push(project.phase);
+              break;
+            case 'Software SOP Actual Date':
+              filteredProject.push(project.softwareSOPActualDate);
+              break;
+            case 'Software SOP Planned Date':
+              filteredProject.push(project.softwareSOPPlannedDate);
+              break;
+            case 'D & D Efforts Actual (PHs)':
+              filteredProject.push(project.ddeffortsActual);
+              break;
+            case 'D & D Efforts Planned (PHs)':
+              filteredProject.push(project.ddeffortsPlanned);
+              break;
+            case 'D & D Amount Actual (in thousands)':
+              filteredProject.push(project.ddAmountActual);
+              break;
+            case 'D & D Amount Planned (in thousands)':
+              filteredProject.push(project.ddAmountPlanned);
+              break;
+            case 'SOP Actual End Date':
+              filteredProject.push(project.sopActualEndDate);
+              break;
+            case 'SOP Planned End Date':
+              filteredProject.push(project.sopPlannedEndDate);
+              break;
+            default:
+              break;
+          }
+        });
+        return filteredProject;
       });
-      return filteredProject;
-    });
+    } else {
+      // Use selectedProjects if any projects are selected
+      const selectedData = projects.filter(project => selectedProjects.includes(project['sno']));
+      dataToExport = selectedData.map(project => {
+        const filteredProject = [];
+        selectedColumns.forEach(column => {
+          switch (column) {
+            case 'Emp Code':
+              filteredProject.push(project.empCode);
+              break;
+            case 'Human Resources':
+              filteredProject.push(project.humanResources);
+              break;
+            case 'Project PIF':
+              filteredProject.push(project.projectPIF);
+              break;
+            case 'Project Name':
+              filteredProject.push(project.projectName);
+              break;
+            case 'Tool Name':
+              filteredProject.push(project.toolName);
+              break;
+            case 'Tool Serial Name':
+              filteredProject.push(project.toolSerialName);
+              break;
+            case 'Customer':
+              filteredProject.push(project.customer);
+              break;
+            case 'Phase':
+              filteredProject.push(project.phase);
+              break;
+            case 'Software SOP Actual Date':
+              filteredProject.push(project.softwareSOPActualDate);
+              break;
+            case 'Software SOP Planned Date':
+              filteredProject.push(project.softwareSOPPlannedDate);
+              break;
+            case 'D & D Efforts Actual (PHs)':
+              filteredProject.push(project.ddeffortsActual);
+              break;
+            case 'D & D Efforts Planned (PHs)':
+              filteredProject.push(project.ddeffortsPlanned);
+              break;
+            case 'D & D Amount Actual (in thousands)':
+              filteredProject.push(project.ddAmountActual);
+              break;
+            case 'D & D Amount Planned (in thousands)':
+              filteredProject.push(project.ddAmountPlanned);
+              break;
+            case 'SOP Actual End Date':
+              filteredProject.push(project.sopActualEndDate);
+              break;
+            case 'SOP Planned End Date':
+              filteredProject.push(project.sopPlannedEndDate);
+              break;
+            default:
+              break;
+          }
+        });
+        return filteredProject;
+      });
+    }
   
     const doc = new jsPDF('landscape');
   
@@ -567,7 +666,6 @@ const Projects = () => {
       }));
     };
   
-    // Apply filters based on selected Phase and ProjectName
     const applyFilters = () => {
       let filteredData = [...projects]; // Assuming projects is your initial data source
     
@@ -699,11 +797,11 @@ const Projects = () => {
           </button>
         </li>
         <li>
-          {username === 'Admin' &&
+          {role === 'admin' &&
             <button className={styles['nav-navButton']} onClick={handleDeleteProjects} disabled={selectedProjects.length === 0}>
             Delete
-          </button>
-            }
+            </button>
+          }
         </li>
         <li>
           <button className={styles['nav-navButton']} onClick={handleToggleExtendedFields}>
@@ -721,7 +819,7 @@ const Projects = () => {
           </button>
         </li>
         <li>
-            { username === 'Admin' &&
+          {role === 'admin' &&
           <button className={styles['nav-navButton']} onClick={() => navigate('/register')}>
             Register
           </button>

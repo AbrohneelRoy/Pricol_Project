@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Register.module.css';
 import logoImage from './image.png';
+import droplist from './droplist.png';
+
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -58,12 +60,15 @@ const Register = () => {
             <img src={logoImage} alt="Logo" className={styles['register-logoImage']} />
           </div>
           <div className={styles['register-userInfo']} onClick={toggleDropdown}>
-            {loggedInUser}
+            {loggedInUser}             
+            <img src={droplist} alt="dropdown arrow" className={`${styles.arrow} ${dropdownOpen ? styles.rotate : ''}`} style={{ width: '25px', height: '25px', marginRight: '5px'}} />
             <div className={`${styles.dropdownContent} ${dropdownOpen ? styles.dropdownOpen : ''}`}>
               <button onClick={handleDash}>Dashboard</button>
               <button onClick={handleLogout}>Logout</button>
             </div>
           </div>
+
+
         </div>
       </header>
       <div className={styles['register-container']}>

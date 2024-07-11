@@ -38,14 +38,7 @@
 }
 
 /* Register User Info */
-.register-userInfo {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  font-size: 24px;
-  color: #fff;
-  margin: 40px;
-}
+
 
 /* Register Container */
 .register-container {
@@ -120,27 +113,64 @@
   color: #333;
 }
 
-/* Dropdown Styles */
+
+.register-userInfo {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 24px;
+  margin-right: 40px;
+
+  color: #fff;
+  padding: 10px;
+  background-color: #137cec;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  margin-bottom: -6px;
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+
+}
+.arrow:hover {
+  filter: drop-shadow(0 0 20px rgb(243, 234, 234)); /* Adjusted shadow color and blur */
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
 .dropdownContent {
   display: none;
   position: absolute;
-  top: 29px;
-  right: -45px;
+  top: 50px; /* Adjusted for better alignment */
+  right: 0;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
   z-index: 1;
-  min-width: 160px;
+  min-width: 200px; /* Increased width for better appearance */
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Show Dropdown Content */
+.register-userInfo:hover {
+  text-shadow: 0 0 20px rgb(243, 234, 234); /* Adjusted shadow color and blur */
+}
+
+
 .dropdownOpen {
   display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Dropdown Item */
 .dropdownContent button {
   width: 100%;
   padding: 12px 16px;
@@ -149,15 +179,59 @@
   background-color: transparent;
   color: #137cec;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 16px;
 }
 
-/* Dropdown Item Hover */
 .dropdownContent button:hover {
   background-color: #137cec;
   color: #f2f2f2;
+  border-radius: 4px;
 }
+
+/* New Styles for Better Alignment and Spacing */
+.dropdownContent {
+  padding: 10px 0; /* Padding inside the dropdown for spacing */
+}
+
+.dropdownContent button {
+  margin: 5px 0; /* Margin between buttons */
+}
+
+.dropdownContent button:first-child {
+  border-top: 1px solid #ddd; /* Optional: top border for first item */
+}
+
+.dropdownContent button:last-child {
+  border-bottom: 1px solid #ddd; /* Optional: bottom border for last item */
+}
+
+/* Adding more styling for dropdown buttons */
+.dropdownContent button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #137cec;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dropdownContent button:hover {
+  background: #137cec;
+  color: #fff;
+  border-radius: 4px;
+  padding-left: 20px; /* Indentation effect on hover */
+}
+
+
+
+
+
+
 
 
 .register-radioGroup {

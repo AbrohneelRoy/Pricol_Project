@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: linear-gradient(to left, #f0f0f0, #ffffff); /* Add a subtle background gradient */
 }
 
 .dashboardheader {
@@ -40,12 +41,6 @@
   margin-right: 10px;
 }
 
-.dashuserInfo {
-  font-size: 24px;
-  margin: 40px;
-  cursor: pointer;
-}
-
 .dashboardContainer {
   display: flex;
   flex: 1;
@@ -62,69 +57,153 @@
   margin-bottom: 20px;
 }
 
+.username {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #333;
+  margin-top: -3px;
+  text-align: center;
+}
+
+.welcomeText {
+  font-size: 1.2em;
+  color: #555;
+  line-height: 1.6;
+  margin: 20px 0;
+  text-align: center;
+}
+
+
 .stats {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
 }
 
+.statItem h2 {
+  font-size: 1.5rem; /* Adjust font size */
+  color: #333; /* Change font color */
+  margin-bottom: -15px; /* Add space below heading */
+  text-transform: uppercase; /* Make text uppercase */
+  letter-spacing: 1px; /* Add letter spacing */
+}
+
+.statItem p {
+  font-size: 2rem; /* Increase number size */
+  font-weight: bold; /* Make the count bold */
+  color: #333; /* Change font color */
+  margin-bottom: 15px; /* Add space below count */
+  animation: fadeIn 1s ease-in-out; /* Add fade-in animation */
+}
+
 .statItem {
-  background-color: #f0f0f0;
+  background: linear-gradient(145deg, #e6e6e6, #ffffff); /* Subtle gradient background */
   padding: 20px;
+  border: 1px solid #ccc;
   border-radius: 8px;
   text-align: center;
   flex: 1;
   margin: 0 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
 }
 
+.statItem:hover {
+  transform: translateY(-6px); /* Lift on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Intensify shadow */
+}
 
 .viewButton {
   background-color: #137cec;
   color: white;
   border: none;
   padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .viewButton:hover {
-  background-color: #0056b3;
+  background-color: #0a5cb5;
 }
-.dashuserInfo {
+
+.phaseDataChart {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #e6e6e6, #ffffff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s, box-shadow 0.3s; 
+  height: 450px;
+  width: 1400px;
+  margin-top: 30px;
+  margin-left: 220px;
+}
+
+.phaseDataChart:hover {
+  transform: translateY(-6px); /* Lift on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Intensify shadow */
+}
+
+
+
+.register-userInfo {
   position: relative;
   display: inline-block;
   cursor: pointer;
   font-size: 24px;
+  margin-right: 40px;
+
   color: #fff;
-  margin: 80px;
+  padding: 10px;
+  background-color: #137cec;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Dropdown Content */
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  margin-bottom: -6px;
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+
+}
+.arrow:hover {
+  filter: drop-shadow(0 0 20px rgb(243, 234, 234)); /* Adjusted shadow color and blur */
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
 .dropdownContent {
   display: none;
   position: absolute;
-  top: 32px; 
-  right: -45px;
+  top: 50px; /* Adjusted for better alignment */
+  right: 0;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
   z-index: 1;
-  min-width: 160px;
+  min-width: 200px; /* Increased width for better appearance */
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Show Dropdown Content */
-.dropdownOpen .dropdownContent {
+.register-userInfo:hover {
+  text-shadow: 0 0 20px rgb(243, 234, 234); /* Adjusted shadow color and blur */
+}
+
+
+.dropdownOpen {
   display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Dropdown Item */
 .dropdownContent button {
   width: 100%;
   padding: 12px 16px;
@@ -133,33 +212,53 @@
   background-color: transparent;
   color: #137cec;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 16px;
 }
 
-/* Dropdown Item Hover */
 .dropdownContent button:hover {
   background-color: #137cec;
   color: #f2f2f2;
+  border-radius: 4px;
 }
 
-/* Dropdown Item with Border Radius */
+/* New Styles for Better Alignment and Spacing */
+.dropdownContent {
+  padding: 10px 0; /* Padding inside the dropdown for spacing */
+}
+
+.dropdownContent button {
+  margin: 5px 0; /* Margin between buttons */
+}
+
 .dropdownContent button:first-child {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-top: 1px solid #ddd; /* Optional: top border for first item */
 }
 
 .dropdownContent button:last-child {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-bottom: 1px solid #ddd; /* Optional: bottom border for last item */
 }
-.phaseDataChart {
-  margin-top: 30px;
-  margin-left: 220px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f2f2f2;
-  height: 450px;
-  width: 1400px;
+
+/* Adding more styling for dropdown buttons */
+.dropdownContent button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #137cec;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
+
+.dropdownContent button:hover {
+  background: #137cec;
+  color: #fff;
+  border-radius: 4px;
+  padding-left: 20px; /* Indentation effect on hover */
+}
+
+
+  
