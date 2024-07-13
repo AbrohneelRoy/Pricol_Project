@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer sno;
     private String projectName;
     private String projectPIF;
@@ -24,6 +23,89 @@ public class Project {
     private String ddAmountPlanned;
     private String sopActualEndDate;
     private String sopPlannedEndDate;
+    private String sitstartdate;
+    private String sitenddate;
+    private String swdvstartdate;
+    private String swdvenddate;
+    private String swcustomerrel;
+    private String swwindchillrel;
+
+    public Project(String projectName, String projectPIF, String toolName, String toolSerialName, String empCode,
+            String humanResources, String customer, String phase, String softwareSOPActualDate,
+            String softwareSOPPlannedDate, String ddeffortsActual, String ddeffortsPlanned, String ddAmountActual,
+            String ddAmountPlanned, String sopActualEndDate, String sopPlannedEndDate, String sitstartdate,
+            String sitenddate, String swdvstartdate, String swdvenddate, String swcustomerrel, String swwindchillrel) {
+        this.projectName = projectName;
+        this.projectPIF = projectPIF;
+        this.toolName = toolName;
+        this.toolSerialName = toolSerialName;
+        this.empCode = empCode;
+        this.humanResources = humanResources;
+        this.customer = customer;
+        this.phase = phase;
+        this.softwareSOPActualDate = softwareSOPActualDate;
+        this.softwareSOPPlannedDate = softwareSOPPlannedDate;
+        this.ddeffortsActual = ddeffortsActual;
+        this.ddeffortsPlanned = ddeffortsPlanned;
+        this.ddAmountActual = ddAmountActual;
+        this.ddAmountPlanned = ddAmountPlanned;
+        this.sopActualEndDate = sopActualEndDate;
+        this.sopPlannedEndDate = sopPlannedEndDate;
+        this.sitstartdate = sitstartdate;
+        this.sitenddate = sitenddate;
+        this.swdvstartdate = swdvstartdate;
+        this.swdvenddate = swdvenddate;
+        this.swcustomerrel = swcustomerrel;
+        this.swwindchillrel = swwindchillrel;
+    }
+
+    public String getSitstartdate() {
+        return sitstartdate;
+    }
+
+    public void setSitstartdate(String sitstartdate) {
+        this.sitstartdate = sitstartdate;
+    }
+
+    public String getSitenddate() {
+        return sitenddate;
+    }
+
+    public void setSitenddate(String sitenddate) {
+        this.sitenddate = sitenddate;
+    }
+
+    public String getSwdvstartdate() {
+        return swdvstartdate;
+    }
+
+    public void setSwdvstartdate(String swdvstartdate) {
+        this.swdvstartdate = swdvstartdate;
+    }
+
+    public String getSwdvenddate() {
+        return swdvenddate;
+    }
+
+    public void setSwdvenddate(String swdvenddate) {
+        this.swdvenddate = swdvenddate;
+    }
+
+    public String getSwcustomerrel() {
+        return swcustomerrel;
+    }
+
+    public void setSwcustomerrel(String swcustomerrel) {
+        this.swcustomerrel = swcustomerrel;
+    }
+
+    public String getSwwindchillrel() {
+        return swwindchillrel;
+    }
+
+    public void setSwwindchillrel(String swwindchillrel) {
+        this.swwindchillrel = swwindchillrel;
+    }
 
     public void setPhase(String phase){
         this.phase = phase;
@@ -166,28 +248,6 @@ public class Project {
         // Default constructor
     }
 
-    public Project(String projectName, String projectPIF, String toolName, String toolSerialName, String empCode,
-            String humanResources, String customer, String softwareSOPActualDate, String softwareSOPPlannedDate,
-            String ddeffortsActual, String ddeffortsPlanned, String ddAmountActual, String ddAmountPlanned,
-            String sopActualEndDate, String sopPlannedEndDate, String phase) {
-        this.projectName = projectName;
-        this.projectPIF = projectPIF;
-        this.toolName = toolName;
-        this.toolSerialName = toolSerialName;
-        this.empCode = empCode;
-        this.humanResources = humanResources;
-        this.customer = customer;
-        this.softwareSOPActualDate = softwareSOPActualDate;
-        this.softwareSOPPlannedDate = softwareSOPPlannedDate;
-        this.ddeffortsActual = ddeffortsActual;
-        this.ddeffortsPlanned = ddeffortsPlanned;
-        this.ddAmountActual = ddAmountActual;
-        this.ddAmountPlanned = ddAmountPlanned;
-        this.sopActualEndDate = sopActualEndDate;
-        this.sopPlannedEndDate = sopPlannedEndDate;
-        this.phase = phase;
-    }
 
-    // toString(), equals(), hashCode() methods if needed
 
 }

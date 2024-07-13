@@ -20,6 +20,11 @@ public class ProjectService {
 
     @Transactional
     public Project createProject(Project project) {
+        Integer maxSno = projectRepository.findMaxSno();
+        if (maxSno == null) {
+            maxSno = 0;
+        }
+        project.setSno(maxSno + 1);
         return projectRepository.save(project);
     }
 
@@ -142,4 +147,7 @@ public class ProjectService {
     public List<String> findDistinctCus() {
         return projectRepository.findDistinctCus(); // Implement this in your repository
     }
+
+
+
 }

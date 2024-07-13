@@ -81,4 +81,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query("SELECT DISTINCT p.customer FROM Project p") // Replace `columnName` with actual field names
     List<String> findDistinctCus();
 
+    @Query("SELECT MAX(p.sno) FROM Project p")
+    Integer findMaxSno();
+
 }
