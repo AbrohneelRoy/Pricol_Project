@@ -1,0 +1,271 @@
+/* Base Styles */
+.dashboardWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(to left, #f0f0f0, #ffffff); /* Subtle background gradient */
+  padding-top: 70px; /* Added padding to avoid content hidden under fixed header */
+}
+
+.dashboardheader {
+  background-color: #137cec;
+  color: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.dashtopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+  width: 100%;
+}
+
+.dashlogo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5em; /* Changed from 24px to em */
+  font-weight: bold;
+}
+
+.dashlogoImg {
+  height: 2.5em; /* Changed from 60px to em */
+  max-width: 100%;
+  object-fit: contain;
+  margin-right: 0.625em; /* Changed from 10px to em */
+}
+
+.dashboardContainer {
+  display: flex;
+  flex: 1;
+  margin-top: 70px;
+  flex-wrap: wrap; /* Allow wrapping for responsiveness */
+}
+
+.mainContent {
+  flex: 1;
+  padding: 1.25em; /* Changed from 20px to em */
+}
+
+.username {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #333;
+  margin-top: -2em; /* Changed from -3px to em */
+  text-align: center;
+}
+
+.welcomeText {
+  font-size: 1.2em;
+  color: #555;
+  line-height: 1.6;
+  margin: 1.25em 0; /* Changed from 20px to em */
+  text-align: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.25em; /* Changed from 20px to em */
+  flex-wrap: wrap; /* Allow wrapping for responsiveness */
+}
+
+.statItem h2 {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: -0.9375em; /* Changed from -15px to em */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.statItem p {
+  font-size: 2em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.9375em; /* Changed from 15px to em */
+  animation: fadeIn 1s ease-in-out;
+}
+
+.statItem {
+  background: linear-gradient(145deg, #e6e6e6, #ffffff);
+  padding: 1.25em; /* Changed from 20px to em */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  flex: 1;
+  margin: 0 0.625em 1.25em; /* Changed from 10px to em */
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* Changed from 4px 8px to em */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.statItem:hover {
+  transform: translateY(-0.375em); /* Changed from -6px to em */
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2); /* Changed from 8px 16px to em */
+}
+
+.viewButton {
+  background-color: #137cec;
+  color: white;
+  border: none;
+  padding: 0.625em 1.25em; /* Changed from 10px 20px to em */
+  border-radius: 0.3125em; /* Changed from 5px to em */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.viewButton:hover {
+  background-color: #0a5cb5;
+}
+
+.phaseDataChart {
+  padding: 1.25em; /* Changed from 20px to em */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #e6e6e6, #ffffff);
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* Changed from 4px 8px to em */
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 28.125em; /* Changed from 450px to em */
+  width: 87.5vw; /* Changed from 1400px to vw */
+  margin: 1.875em auto; /* Changed from 30px to em */
+}
+
+.phaseDataChart:hover {
+  transform: translateY(-0.375em); /* Changed from -6px to em */
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2); /* Changed from 8px 16px to em */
+}
+
+.register-userInfo {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.5em; /* Changed from 24px to em */
+  margin-right: 2.5em; /* Changed from 40px to em */
+  color: #fff;
+  padding: 0.625em; /* Changed from 10px to em */
+  background-color: #137cec;
+  border-radius: 0.5em; /* Changed from 8px to em */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  margin-bottom: -0.26em; /* Changed from -6px to em */
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.arrow:hover {
+  filter: drop-shadow(0 0 1.25em rgb(243, 234, 234)); /* Changed from 20px to em */
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 3.125em; /* Changed from 50px to em */
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.5em; /* Changed from 8px to em */
+  box-shadow: 0px 0.25em 0.75em rgba(0, 0, 0, 0.15); /* Changed from 4px 12px to em */
+  z-index: 1;
+  min-width: 12.5em; /* Changed from 200px to em */
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-0.625em); /* Changed from -10px to em */
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.register-userInfo:hover {
+  text-shadow: 0 0 1.25em rgb(243, 234, 234); /* Changed from 20px to em */
+}
+
+.dropdownOpen {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdownContent button {
+  width: 100%;
+  padding: 0.75em 1em; /* Changed from 12px 16px to em */
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  color: #137cec;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 1em; /* Changed from 16px to em */
+}
+
+.dropdownContent button:hover {
+  background-color: #137cec;
+  color: #f2f2f2;
+  border-radius: 0.25em; /* Changed from 4px to em */
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 2.5em; /* Adjusted for better positioning */
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.3em; /* Changed from 8px to em */
+  box-shadow: 0px 0.15em 0.5em rgba(0, 0, 0, 0.15); /* Changed from 4px 12px to em */
+  z-index: 1;
+  min-width: 7em; /* Changed from 200px to em */
+  max-width: 10em; /* Added max width */
+  overflow: hidden;
+  opacity: 0;
+  font-size: smaller;
+  transform: translateY(-0.5em); /* Changed from -10px to em */
+  transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  padding: 0.4em 0; /* Reduced padding */
+}
+
+.dropdownContent button {
+  margin: 0.3125em 0; /* Changed from 5px to em */
+}
+
+.dropdownContent button:first-child {
+  border-top: 1px solid #ddd;
+}
+
+.dropdownContent button:last-child {
+  border-bottom: 1px solid #ddd;
+}
+
+.dropdownContent button {
+  display: block;
+  width: 100%;
+  padding: 0.75em 1em; /* Changed from 12px 16px to em */
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdownContent button:hover {
+  background-color: #137cec;
+  color: #fff;
+  border-radius: 0.25em; /* Changed from 4px to em */
+}
+
+.dropdownOpen {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
