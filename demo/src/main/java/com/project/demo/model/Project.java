@@ -30,6 +30,11 @@ public class Project {
     private String swcustomerrel;
     private String swwindchillrel;
 
+    // Constructors
+    public Project() {
+        // Default constructor
+    }
+
     public Project(String projectName, String projectPIF, String toolName, String toolSerialName, String empCode,
             String humanResources, String customer, String phase, String softwareSOPActualDate,
             String softwareSOPPlannedDate, String ddeffortsActual, String ddeffortsPlanned, String ddAmountActual,
@@ -243,10 +248,7 @@ public class Project {
         this.sopPlannedEndDate = sopPlannedEndDate;
     }
 
-    // Constructors
-    public Project() {
-        // Default constructor
-    }
+    
 
 
 

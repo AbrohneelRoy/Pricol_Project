@@ -64,6 +64,13 @@ public class ProjectService {
             existingProject.setDdAmountPlanned(newProjectData.getDdAmountPlanned());
             existingProject.setSopActualEndDate(newProjectData.getSopActualEndDate());
             existingProject.setSopPlannedEndDate(newProjectData.getSopPlannedEndDate());
+            existingProject.setPhase(newProjectData.getPhase());
+            existingProject.setSitstartdate(newProjectData.getSitstartdate());
+            existingProject.setSitenddate(newProjectData.getSitenddate());
+            existingProject.setSwdvstartdate(newProjectData.getSwdvstartdate());
+            existingProject.setSwdvenddate(newProjectData.getSwdvenddate());
+            existingProject.setSwcustomerrel(newProjectData.getSwcustomerrel());
+            existingProject.setSwwindchillrel(newProjectData.getSwwindchillrel());
 
             return projectRepository.save(existingProject);
         } else {
