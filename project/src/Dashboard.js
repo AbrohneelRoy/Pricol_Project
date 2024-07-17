@@ -71,7 +71,7 @@ const Dashboard = () => {
     labels: ['A100', 'B100', 'B200', 'C100', 'C200', 'D100', 'SOP'],
     datasets: [
       {
-        label: 'Phase Counts',
+        label: 'Phase/Stage Counts',
         data: [phase1, phase2, phase3, phase4, phase5, phase6, phase7],
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)', // Red
