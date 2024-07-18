@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/projects")
-@CrossOrigin(origins = "http://192.168.202.76:3000")
+@CrossOrigin(origins = "http://192.168.214.76:3000")
 public class ProjectController {
 
     @Autowired

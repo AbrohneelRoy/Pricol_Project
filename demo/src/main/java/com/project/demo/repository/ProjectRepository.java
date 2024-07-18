@@ -57,28 +57,28 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query(value = "TRUNCATE TABLE project", nativeQuery = true)
     void truncateTable();
 
-    @Query("SELECT DISTINCT p.phase FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.phase FROM Project p") 
     List<String> findDistinctColumns();
 
-    @Query("SELECT DISTINCT p.projectName FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.projectName FROM Project p") 
     List<String> findDistinctPnames();
 
-    @Query("SELECT DISTINCT p.projectPIF FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.projectPIF FROM Project p") 
     List<String> findDistinctPif();
 
-    @Query("SELECT DISTINCT p.toolName FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.toolName FROM Project p") 
     List<String> findDistinctTname();
 
-    @Query("SELECT DISTINCT p.toolSerialName FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.toolSerialName FROM Project p") 
     List<String> findDistinctTSname();
 
-    @Query("SELECT DISTINCT p.empCode FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.empCode FROM Project p") 
     List<String> findDistinctEcode();
 
-    @Query("SELECT DISTINCT p.humanResources FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.humanResources FROM Project p") 
     List<String> findDistinctHr();
 
-    @Query("SELECT DISTINCT p.customer FROM Project p") // Replace `columnName` with actual field names
+    @Query("SELECT DISTINCT p.customer FROM Project p") 
     List<String> findDistinctCus();
 
     @Query("SELECT MAX(p.sno) FROM Project p")
