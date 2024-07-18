@@ -22,9 +22,6 @@ const Employee = () => {
   ];
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
-  const containerRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchInput, setSearchInput] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showExtendedFields, setShowExtendedFields] = useState(true); 
   const [selectedColumns, setSelectedColumns] = useState([
@@ -35,6 +32,10 @@ const Employee = () => {
     'D & D Amount Actual (in thousands)', 'D & D Amount Planned (in thousands)',
     'SOP Actual End Date', 'SOP Planned End Date'
   ]);
+
+  const [searchInput, setSearchInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const containerRef = useRef(null);
 
   const [newProject, setNewProject] = useState({
     projectPIF: '',
@@ -91,7 +92,7 @@ const Employee = () => {
   const [role, setRole] = useState('');
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/login');
+      const response = await axios.get('http://192.168.214.228:8080/login');
       const loggedInUser = localStorage.getItem('username');
   
       const currentUser = response.data.find(user => user.username === loggedInUser);
@@ -115,7 +116,7 @@ const Employee = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects');
+      const response = await axios.get('http://192.168.214.228:8080/projects');
       setProjects(response.data);
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -156,7 +157,7 @@ const Employee = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.202.228:8080/projects', newProject);
+      const response = await axios.post('http://192.168.214.228:8080/projects', newProject);
       setProjects([...projects, response.data.project]);
       setShowAddForm(false);
       setNewProject({
@@ -216,12 +217,12 @@ const Employee = () => {
   const handleDeleteProjects = async () => {
     try {
       if (selectedProjects.length === projects.length) {
-        await axios.delete('http://192.168.202.228:8080/projects/truncate');
+        await axios.delete('http://192.168.214.228:8080/projects/truncate');
       } 
       else {
         await Promise.all(
           selectedProjects.map(async (projectId) => {
-            await axios.delete(`http://192.168.202.228:8080/projects/${projectId}`);
+            await axios.delete(`http://192.168.214.228:8080/projects/${projectId}`);
           })
         );
       }
@@ -244,7 +245,7 @@ const Employee = () => {
   
     try {
       // Fetch the selected project for modification
-      const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
+      const response = await axios.get(`http://192.168.214.228:8080/projects/${selectedProjects[0]}`);
       window.scrollTo({ top: 0, left: 0 });
       setNewProject(response.data);
       setShowAddForm(true);
@@ -256,7 +257,7 @@ const Employee = () => {
   const handleUpdateProject = async () => {
     try {
       // Send a PUT request to update the project
-      await axios.put(`http://192.168.202.228:8080/projects/${newProject.sno}`, newProject);
+      await axios.put(`http://192.168.214.228:8080/projects/${newProject.sno}`, newProject);
       console.log('Project updated successfully.');
   
       // Update the local state to reflect the changes
@@ -725,7 +726,6 @@ const Employee = () => {
     setSearchInput(event.target.value);
   };
 
-  
   const handleSearchButtonClick = () => {
     setSearchTerm(searchInput);
   };
@@ -738,26 +738,26 @@ const Employee = () => {
       }
     }
   }, [searchTerm]);
-  
-  
-  
+
   const highlightText = (text, term) => {
-    if (!term) return text;
-    
+    console.log('highlightText called with:', { text, term }); // Add this log
+
+    if (!text || !term) return text;
+
     const regex = new RegExp(`\\b(${term.trim()})\\b`, 'gi');
     return text.split(regex).map((part, index) => (
       regex.test(part) ? <span key={index} className={styles['highlight']}>{part}</span> : part
     ));
   };
-  
-  
+
   useEffect(() => {
     scrollToHighlightedText();
   }, [searchTerm, scrollToHighlightedText]);
+  
 
   const fetchPhaseOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-phase');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-phase');
       const options = response.data.map(phase => ({ value: phase, label: phase }));
       setPhaseOptions(options);
     } catch (error) {
@@ -766,7 +766,7 @@ const Employee = () => {
   };
   const fetchPnameOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pname');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-pname');
       const options = response.data.map(projectName => ({ value: projectName, label: projectName }));
       setPnameOptions(options);
     } catch (error) {
@@ -775,7 +775,7 @@ const Employee = () => {
   };
   const fetchPifOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pif');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-pif');
       const options = response.data.map(projectPIF => ({ value: projectPIF, label: projectPIF }));
       setPifOptions(options);
     } catch (error) {
@@ -784,7 +784,7 @@ const Employee = () => {
   };
   const fetchTnameOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-tname');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-tname');
       const options = response.data.map(toolName => ({ value: toolName, label: toolName }));
       setTnameOptions(options);
     } catch (error) {
@@ -793,7 +793,7 @@ const Employee = () => {
   };
   const fetchTSnameOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-tsname');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-tsname');
       const options = response.data.map(toolSerialName => ({ value: toolSerialName, label: toolSerialName }));
       setTsnameOptions(options);
     } catch (error) {
@@ -802,7 +802,7 @@ const Employee = () => {
   };
   const fetchEcodeOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-ecode');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-ecode');
       const options = response.data.map(empCode => ({ value: empCode, label: empCode }));
       setEcodeOptions(options);
     } catch (error) {
@@ -811,7 +811,7 @@ const Employee = () => {
   };
   const fetchHrOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-hr');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-hr');
       const options = response.data.map(humanResources => ({ value: humanResources, label: humanResources }));
       setHrOptions(options);
     } catch (error) {
@@ -820,7 +820,7 @@ const Employee = () => {
   };
   const fetchCusOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-cus');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-cus');
       const options = response.data.map(customer => ({ value: customer, label: customer }));
       setCusOptions(options);
     } catch (error) {
@@ -1003,13 +1003,13 @@ const Employee = () => {
         </div>
         
         <div className={styles['projects-content']} ref={containerRef}>
-        <div className={styles['projects-controls']}>
+          <div className={styles['projects-controls']}>
             <input
-              type="text"
-              placeholder="Search..."
-              value={searchInput}
-              onChange={handleSearchInputChange}
-              className={styles['projects-search']}
+            type="text"
+            placeholder="Search..."
+            value={searchInput}
+            onChange={handleSearchInputChange}
+            className={styles['projects-search']}
             />
             <button onClick={handleSearchButtonClick} className={styles['projects-search-button']}>
               Search
@@ -1083,6 +1083,7 @@ const Employee = () => {
               </div>
             )}
           </div>
+
           {showAddForm && (
             <div className={styles['projects-form']}>
               <h2>{newProject['sno'] ? 'Modify Data' : 'Add New Data'}</h2>

@@ -85,7 +85,7 @@ const Projects = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/login');
+      const response = await axios.get('http://192.168.214.228:8080/login');
       const loggedInUser = localStorage.getItem('username');
   
       const currentUser = response.data.find(user => user.username === loggedInUser);
@@ -109,7 +109,7 @@ const Projects = () => {
   
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects');
+      const response = await axios.get('http://192.168.214.228:8080/projects');
       setProjects(response.data);
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -151,7 +151,7 @@ const Projects = () => {
     }
   
     try {
-      const response = await axios.post('http://192.168.202.228:8080/projects', newProject);
+      const response = await axios.post('http://192.168.214.228:8080/projects', newProject);
       setProjects([...projects, response.data.project]);
       setShowAddForm(false);
       
@@ -201,12 +201,12 @@ const Projects = () => {
   const handleDeleteProjects = async () => {
     try {
       if (selectedProjects.length === projects.length) {
-        await axios.delete('http://192.168.202.228:8080/projects/truncate');
+        await axios.delete('http://192.168.214.228:8080/projects/truncate');
       } 
       else {
         await Promise.all(
           selectedProjects.map(async (projectId) => {
-            await axios.delete(`http://192.168.202.228:8080/projects/${projectId}`);
+            await axios.delete(`http://192.168.214.228:8080/projects/${projectId}`);
           })
         );
       }
@@ -229,7 +229,7 @@ const Projects = () => {
   
     try {
       // Fetch the selected project for modification
-      const response = await axios.get(`http://192.168.202.228:8080/projects/${selectedProjects[0]}`);
+      const response = await axios.get(`http://192.168.214.228:8080/projects/${selectedProjects[0]}`);
       window.scrollTo({ top: 0, left: 0 });
       setNewProject(response.data);
       setShowAddForm(true);
@@ -241,7 +241,7 @@ const Projects = () => {
   const handleUpdateProject = async () => {
     try {
       // Send a PUT request to update the project
-      await axios.put(`http://192.168.202.228:8080/projects/${newProject.sno}`, newProject);
+      await axios.put(`http://192.168.214.228:8080/projects/${newProject.sno}`, newProject);
       console.log('Project updated successfully.');
   
       // Update the local state to reflect the changes
@@ -257,10 +257,8 @@ const Projects = () => {
 
   const handleSubmit = async () => {
     if (newProject.sno) {
-      // Update the existing project
       await handleUpdateProject();
     } else {
-      // Add a new project
       await handleAddProject();
     }
   };
@@ -700,11 +698,14 @@ const Projects = () => {
   };
   
 
+  
+  
+
+
   const handleSearchInputChange = (event) => {
     setSearchInput(event.target.value);
   };
 
-  
   const handleSearchButtonClick = () => {
     setSearchTerm(searchInput);
   };
@@ -717,19 +718,18 @@ const Projects = () => {
       }
     }
   }, [searchTerm]);
-  
-  
-  
+
   const highlightText = (text, term) => {
-    if (!term) return text;
-    
+    console.log('highlightText called with:', { text, term }); // Add this log
+
+    if (!text || !term) return text;
+
     const regex = new RegExp(`\\b(${term.trim()})\\b`, 'gi');
     return text.split(regex).map((part, index) => (
       regex.test(part) ? <span key={index} className={styles['highlight']}>{part}</span> : part
     ));
   };
-  
-  
+
   useEffect(() => {
     scrollToHighlightedText();
   }, [searchTerm, scrollToHighlightedText]);
@@ -743,7 +743,7 @@ const Projects = () => {
 
   const fetchPhaseOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-phase');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-phase');
       const options = response.data.map(phase => ({ value: phase, label: phase }));
       setPhaseOptions(options);
     } catch (error) {
@@ -752,7 +752,7 @@ const Projects = () => {
   };
   const fetchPnameOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pname');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-pname');
       const options = response.data.map(projectName => ({ value: projectName, label: projectName }));
       setPnameOptions(options);
     } catch (error) {
@@ -761,7 +761,7 @@ const Projects = () => {
   };
   const fetchPifOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-pif');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-pif');
       const options = response.data.map(projectPIF => ({ value: projectPIF, label: projectPIF }));
       setPifOptions(options);
     } catch (error) {
@@ -770,7 +770,7 @@ const Projects = () => {
   };
   const fetchTnameOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-tname');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-tname');
       const options = response.data.map(toolName => ({ value: toolName, label: toolName }));
       setTnameOptions(options);
     } catch (error) {
@@ -779,7 +779,7 @@ const Projects = () => {
   };
   const fetchTSnameOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-tsname');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-tsname');
       const options = response.data.map(toolSerialName => ({ value: toolSerialName, label: toolSerialName }));
       setTsnameOptions(options);
     } catch (error) {
@@ -788,7 +788,7 @@ const Projects = () => {
   };
   const fetchEcodeOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-ecode');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-ecode');
       const options = response.data.map(empCode => ({ value: empCode, label: empCode }));
       setEcodeOptions(options);
     } catch (error) {
@@ -797,7 +797,7 @@ const Projects = () => {
   };
   const fetchHrOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-hr');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-hr');
       const options = response.data.map(humanResources => ({ value: humanResources, label: humanResources }));
       setHrOptions(options);
     } catch (error) {
@@ -806,7 +806,7 @@ const Projects = () => {
   };
   const fetchCusOptions = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/distinct-cus');
+      const response = await axios.get('http://192.168.214.228:8080/projects/distinct-cus');
       const options = response.data.map(customer => ({ value: customer, label: customer }));
       setCusOptions(options);
     } catch (error) {

@@ -27,7 +27,7 @@ const Dashboard = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/login');
+      const response = await axios.get('http://192.168.214.228:8080/login');
       const loggedInUser = localStorage.getItem('username');
   
       const currentUser = response.data.find(user => user.username === loggedInUser);
@@ -46,7 +46,7 @@ const Dashboard = () => {
 
   const fetchCounts = async () => {
     try {
-      const response = await axios.get('http://192.168.202.228:8080/projects/count');
+      const response = await axios.get('http://192.168.214.228:8080/projects/count');
       setProjectsCount(response.data.projectCount);
       setEmployeesCount(response.data.empCount);
       setToolsCount(response.data.toolCount);

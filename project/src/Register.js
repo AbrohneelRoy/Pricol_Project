@@ -31,7 +31,7 @@ const Register = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://192.168.202.228:8080/login', {
+      const response = await fetch('http://192.168.214.228:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://192.168.202.228:8080/login/check', {
+      const response = await fetch('http://192.168.214.228:8080/login/check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
